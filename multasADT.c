@@ -1,21 +1,27 @@
 #include <stdio.h>
 #include <ctype.h>
 
+typedef struct tMulta{
+    char* plate
+}tMulta;
+
 typedef struct tInfraction{
-    char* name;
+    char* nameInfr;
     int cant;
+    tMulta * multas;
+    int dimMultas;
 }tInfraction;
 
 typedef struct tAgency{
     struct tAgency * next;
-    char* name;
-    tInfraction * infractions;
+    char* nameAgency;
+    int * infractionsPopularity;
 }tAgency;
 
 typedef struct multasADT{
 tInfraction * infractions;
-tAgency * first;
-tAgency* iter;
+tAgency * firstAgency;
+tAgency* iterAgency;
 }multasADT;
 
 
