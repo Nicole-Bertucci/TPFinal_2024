@@ -77,8 +77,11 @@ void addInfraction(ticketsADT ticket, size_t id, char* name){
        ticket->infractions= realloc(ticket->infractions, sizeof(tInfraction)*(id));
     }
     if(ticket->infractions[id-1].nameInfr==NULL){
+        ticket->infractions[id-1].nameInfr=malloc(sizeof(name));
         strcpy(ticket->infractions[id-1].nameInfr,name);
-
+        ticket->infractions[id-1].dimMultas=0;
+        ticket->infractions[id-1].multasTotales=0;
+        ticket->infractions[id-1].multas=NULL;
     }
 
 }
