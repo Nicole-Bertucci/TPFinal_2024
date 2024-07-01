@@ -47,3 +47,38 @@ static addAgencyRec(tAgency * agency, size_t id, char * name){
 void addAgency (ticketsADT ticket,  size_t id, char* name){
     ticket->firstAgency = addAgencyRec(ticket->firstAgency, id, name);
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//@param ticket ciudad en donde ocurren las multas
+//@param id numero de identificacion de la infraccion
+//@param name descripcion de la infraccion
+//agrega una nueva infraccion en la ciudad, si ya existe aborta
+void addInfraction(ticketsADT ticket, size_t id, char* name){
+    //chequeo si hay espacio
+    if(ticket->dimInfraction<=id-1){
+       ticket->infractions= realloc(ticket->infractions, sizeof(tInfraction)*(id));
+    }
+    if(ticket->infractions[id-1].nameInfr==NULL){
+        strcpy(ticket->infractions[id-1].nameInfr,name);
+
+    }
+
+}
