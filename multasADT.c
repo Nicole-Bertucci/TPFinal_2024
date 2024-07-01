@@ -18,35 +18,11 @@ typedef struct tAgency{
     int * infractionsPopularity;
 }tAgency;
 
-typedef struct multasADT{
+typedef struct ticketsADT{
 tInfraction * infractions;
+int dimInfraction;
 tAgency * firstAgency;
 tAgency* iterAgency;
-}multasADT;
+}ticketsADT;
 
-
-// odenadas alfabeticamente 
-// typedef struct tAgency{
-//     tMulta* firstFine;
-//     char* nameAgency;
-//     char* infPop;
-//     int cantInfPop;
-//     struct tAgency nextAgency;
-// }tAgency;
-
-// typedef struct tInfraction{
-//     unsigned int id;
-//     char* name;
-//     int totalInf;
-//     char* popPlate;
-//     int cantPopPlate;
-//     struct tInfraction * nextInf
-// } tInfraction;
-
-// typedef struct fineCDT{
-// tAgency * firstAgency;
-// tAgency * iterAgency;
-// tInfraction * firstInfraction;
-// tInfraction * iterInfraction;
-// }fineCDT;
 
