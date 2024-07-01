@@ -1,30 +1,40 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <strings.h>
 #include <ctype.h>
+#include <ticketsADT.h>
 
 typedef struct tMulta{
-    char* plate
+    char* plate;
+    size_t cantidad;
 }tMulta;
 
 typedef struct tInfraction{
     char* nameInfr;
-    int cant;
     tMulta * multas;
-    int dimMultas;
+    size_t dimMultas;
+    size_t multasTotales;
 }tInfraction;
 
 typedef struct tAgency{
     struct tAgency * next;
     char* nameAgency;
-    int * infractionsPopularity;
+    size_t* infractionsPopularity;
 }tAgency;
 
-typedef struct ticketsADT{
+typedef struct ticketsCDT{
 tInfraction * infractions;
-int dimInfraction;
+size_t dimInfraction;
 tAgency * firstAgency;
 tAgency* iterAgency;
-}ticketsADT;
+}ticketsCDT;
 
-//test
-//test2
-
+ticketsADT newTicket(){
+    ticketsADT new = calloc(1,sizeof(*new));
+    if(new == NULL){
+        perror();
+        exit();
+    }
+    new->
+}
