@@ -42,19 +42,23 @@ ticketsADT newTicket(){
     }
     return new;
 }
+static int comparar(tInfraction * i1,tInfraction *i2  ){
+    if (i1 == NULL || i2 == NULL) {
+        return 0;
+    }
+    return i1 //// corregir
+}
+
+void ordenar(ticketsADT ticket){
+    qsort(ticket->infractions,ticket->dimInfraction,sizeof(ticket->infractions[0]), comparar);
+}
+
 static char * stringCopy(const char * name, size_t lens){
     char * new[lens+1]; 
     strcpy(new, name);
     return new;
 }
 
-static comparar(){
-
-}
-
-void ordenar(ticketsADT ticket){
-    qsort(ticket->infractions,ticket->dimInfraction,sizeof(ticket->infractions[0]), comparar);
-}
 
 static tAgency * addAgencyRec(tAgency * agency, size_t id, char * name, size_t * dim){
     int c;
