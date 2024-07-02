@@ -19,6 +19,7 @@ typedef struct tInfraction{
     tMulta * firstMulta;
     size_t dimMultas;
     size_t multasTotales;
+    size_t idNumber;
 }tInfraction;
 
 typedef struct tAgency{
@@ -28,10 +29,10 @@ typedef struct tAgency{
 }tAgency;
 
 typedef struct ticketsCDT{
-tInfraction * infractions;
-size_t dimInfraction;
-tAgency * firstAgency;
-tAgency * iterAgency;
+    tInfraction * infractions;
+    size_t dimInfraction;
+    tAgency * firstAgency;
+    tAgency * iterAgency;
 }ticketsCDT;
 
 ticketsADT newTicket(){
@@ -42,11 +43,10 @@ ticketsADT newTicket(){
     }
     return new;
 }
-static int comparar(tInfraction * i1,tInfraction *i2  ){
-    if (i1 == NULL || i2 == NULL) {
-        return 0;
-    }
-    return i1 //// corregir
+static int comparar(const void *a, const void *b){
+    tInfraction *i1 = (tInfraction *)a;
+    tInfraction *i2 = (tInfraction *)b;
+    return (i1->idNumber > i2->idNumber) - (i1->idNumber < i2->idNumber);
 }
 
 void ordenar(ticketsADT ticket){
@@ -59,7 +59,6 @@ static char * stringCopy(const char * name, size_t lens){
     return new;
 }
 
-
 static tAgency * addAgencyRec(tAgency * agency, size_t id, char * name, size_t * dim){
     int c;
     if (agency == NULL || (c = strcasecmp(agency->nameAgency, name)) > 0) {
@@ -68,8 +67,12 @@ static tAgency * addAgencyRec(tAgency * agency, size_t id, char * name, size_t *
             perror(ERRORMEMORIA);
             exit(EXIT_FAILURE);            
         }
+        
+        //aca tambien va la busqueda binaria si hacemos que las agencias tengan el vector entero de infracciones inicializadas en 0
+        //sino hacemos lista o hacemos vector desordenado con reallocs
+
         if (*dim < id) {
-            new->infractionsPopularity = malloc(id*sizeof(size_t));
+            new->infractionsPopularity = malloc(sizeof(size_t));
             if(new->infractionsPopularity == NULL){
                 perror(ERRORMEMORIA);
                 exit(EXIT_FAILURE);            
@@ -93,6 +96,8 @@ static tAgency * addAgencyRec(tAgency * agency, size_t id, char * name, size_t *
 void addAgency (ticketsADT ticket,  size_t id, char * name){
     ticket->firstAgency = addAgencyRec(ticket->firstAgency, id, name, &ticket->dimInfraction);
 }
+
+//hay q hacer busqueda binaria por posicion del ID
 
 void addInfraction(ticketsADT ticket, size_t id, const char* name){
     if(ticket->dimInfraction<=id-1){
@@ -149,6 +154,7 @@ static void addMultaRec(tMulta* first, const char* patente, size_t *dim){
 
 
 }
+
 
 void addMulta(ticketsADT ticket, int id, const char* patente, const char* agentcyName){
     if(id>=ticket->dimInfraction||ticket->infractions[id-1].nameInfr==NULL){

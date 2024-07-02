@@ -55,7 +55,33 @@ void csvReadTickets(const char * argv[], ticketsADT tickets) {
     }    
     char s[LINE];
     fgets(s,LINE,ticketsFile);
+    while (fgets(s,LINE,ticketsFile), ticketsFile){
+        size_t id;
+        char * plate;
+        char * agency;
+        char * token = strtok(s,SEPARATOR);
+        if (token != NULL) {
+            for (int i = 0; token != NULL; i++) {
+                switch (i) {
+                case infractionId:
+                    id = atoi(token);
+                    break;
+                
+                case Plate:
+                    plate = token;
+                    break;
 
+                case issuingAgency:
+                    agency = token;
+                    break;
 
-
+                default:
+                    break;
+                }
+            token = strtok(NULL,SEPARATOR);
+            }
+            addMulta(tickets,id,plate,agency);
+        }       
+    }
+    fclose(ticketsFile);
 }

@@ -13,7 +13,7 @@ enum INFRACTIONS{
 
 #if FORMATNYC
 #define FORMAT_TICKETS_NYC \
-    plate, \
+    Plate, \
     issueDate, \
     infractionId, \
     fineAmount, \
@@ -26,7 +26,7 @@ enum TICKETSNYC{
 #elif FORMATCHI
 #define FORMAT_TICKETS_CHI \
     issueDate, \
-    plate, \
+    Plate, \
     issuingAgency, \
     infractionId, \
     fineAmount, \

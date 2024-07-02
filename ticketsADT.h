@@ -5,7 +5,8 @@
 #define PLATE 10
 
 #ifndef FORMATNYC
-#define FORMATNYC 0
+// cambiar a 0 cuando hagamos el makefile, lo dejo en 1 para que no haga warnings mientras codeamos
+#define FORMATNYC 1 
 #endif
 
 #ifndef FORMATCHI
@@ -42,10 +43,10 @@ void addInfraction(ticketsADT ticket, size_t id, const char* name);
 //@param patente numero de patente a la que se le aplico la multa
 //@param nombre de la agencia que escribe la multa
 // Si la patente no existe en el arreglo agrega al final del arreglo la multa 
-//segun la infraccion dada en @param idInfraccion, en el caso contrario solo
+//segun la infraccion dada en idInfraccion, en el caso contrario solo
 //aumenta la cantidad de multas de esa patente
 // Aumenta la cantidad de multas de ese tipo de infraccion
-//Aumenta la cantidad de infracciones del tipo generado por la agencia  de nombre agency
+//Aumenta la cantidad de infracciones del tipo generado por la agencia de nombre agency
 void addMulta(ticketsADT ticket, size_t idInfraction, const char* patente, const char* agency );
 
 //@param ticket ciudad en donde existe la agencia
@@ -53,9 +54,11 @@ void addMulta(ticketsADT ticket, size_t idInfraction, const char* patente, const
 //agrega por orden alfabetico una nueva agencia, si ya existe aborta
 void addAgency (ticketsADT ticket, size_t id, const char* name);
 
+//@param ticket ciudad en donde ocurren las multas
+//ordena el vector de id antes de cargar los tickets
 void ordenar(ticketsADT ticket);
+
 //libera los recursos utilizados por ticketsADT
 void free(ticketsADT ticket);
-
 
 #endif 
