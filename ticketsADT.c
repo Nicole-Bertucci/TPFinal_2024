@@ -89,27 +89,6 @@ void addAgency (ticketsADT ticket,  size_t id, char * name){
     ticket->firstAgency = addAgencyRec(ticket->firstAgency, id, name, &ticket->dimInfraction);
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 void addInfraction(ticketsADT ticket, size_t id, const char* name){
     if(ticket->dimInfraction<=id-1){
        ticket->infractions= realloc(ticket->infractions, sizeof(tInfraction)*(id));
@@ -119,7 +98,6 @@ void addInfraction(ticketsADT ticket, size_t id, const char* name){
         ticket->infractions[id-1].nameInfr=stringCopy(name);
         ticket->infractions[id-1].dimMultas=0;
         ticket->infractions[id-1].multasTotales=0;
-       // ticket->infractions[id-1].multas=NULL;
        ticket->infractions[id-1].firstMulta=NULL;
     }
 
@@ -128,82 +106,79 @@ void addInfraction(ticketsADT ticket, size_t id, const char* name){
 
 
 
-//devuelve el index +1 del arreglo donde esta la patente 
-//o en el caso de lista deja el iterador ahi y devuelve 1 si existe 0 si no
-// static int exist(int id, char* plateNumber){
+static tMulta* newMulta(const char* plate){
+    tMulta* new=malloc(sizeof(tMulta));
+    new->plate=stringCopy(plate);
+    new->der=NULL;
+    new->izq=NULL;
+    new->cantidad=1;
+    return new;
+}
 
-// }
 
-//****VERSION DE ADDMULTA CON ARBOL */
 //si encuentra la patente agrega uno a su cantidad, caso contrario agrega la patente
 //en el lugar correspondiente siguiendo el orden alfabetico;
-static void addMultaRec(tMulta * firstMulta, const char* patente){
-    printf("entre\n");
+static void addMultaRec(tMulta* first, const char* patente){
+    //si es menor
+    if(strcmp(patente,first->plate)==0){
+        
+        first->cantidad++;
 
-    if(firstMulta==NULL){
-        printf("aca llegue\n");
-        tMulta* new=malloc(sizeof(tMulta));
-        new->plate= stringCopy(patente);
-        new->cantidad=1;
-        new->der=NULL;
-        new->izq=NULL;
-        firstMulta=new;
-        return;
     }
-    printf("me meti aca\n ");
-    if(strcmp(firstMulta->plate,patente )<0){
-        printf("pase por aca <0\n");
-      addMultaRec(firstMulta->der, patente);
-    }
-     printf("pase por aca\n ");
-    if(strcmp(firstMulta->plate,patente )>0){
-        printf("UWUUU\n ");
-     addMultaRec(firstMulta->izq, patente);
-    }
-    firstMulta->cantidad++;
+    if(strcmp(patente,first->plate)<0){
+        //si hay lugar
+        if(first->izq==NULL){
+            tMulta *new=newMulta(patente);
+            first->izq=new;
+        }
+        else{
 
+            addMultaRec(first->izq, patente);
+        }
+     
+
+    }
+    if(strcmp(patente,first->plate)>0){
+        if(first->der==NULL){
+            tMulta *new=newMulta(patente);
+            first->der=new;
+        }
+        else{
+       
+            addMultaRec(first->der, patente);
+
+        }
+   
+    }
+
+
+}
+
+void addMulta(ticketsADT ticket, int id, const char* patente, const char* agentcyName){
+    if(id>=ticket->dimInfraction){
+        perror(DATOINVALIDO);
+        exit(EXIT_FAILURE);
+    }
+    if(ticket->infractions[id-1].firstMulta==NULL){
+        ticket->infractions[id-1].firstMulta=newMulta(patente);
+    }
+    else{
+    addMultaRec(ticket->infractions[id-1].firstMulta, patente);
+    }
+    addAgency(ticket, id, agentcyName);
 }
 
 
 
- void addMulta(ticketsADT ticket, size_t idInfraction, const char* patente, char* agencyName){
-    if(ticket->dimInfraction<idInfraction){
-        perror(DATOINVALIDO);
-        exit(EXIT_FAILURE);
+//********funcion de prueba, ver como adaptar para QUERY 3 **************/
+//lee en orden alfabetico
+static int recorrerMultas(tMulta * first){
+
+        if(first !=NULL){
+        recorrerMultas(first->izq);
+         printf("%s /%ld\n", first->plate, first->cantidad); 
+        recorrerMultas(first->der);
+
     }
-    if(ticket->infractions[idInfraction-1].firstMulta==NULL){
-        tMulta* new=malloc(sizeof(tMulta));
-        new->plate= stringCopy(patente);
-        new->cantidad=1;
-        new->der=NULL;
-        new->izq=NULL;
-        ticket->infractions[idInfraction-1].firstMulta=new;
-        return;
+    return 1;
     }
-addMultaRec(ticket->infractions[idInfraction-1].firstMulta, patente);
- 
-    // addAgency(ticket,idInfraction, agencyName);
- }
-//****VERSION DE ADDMULTA CON VECTORES */
-
-// void addMulta(ticketsADT ticket, size_t idInfraction, const char* patente, char* agencyName ){
-// if(ticket->dimInfraction<idInfraction){
-//     perror(DATOINVALIDO);
-//     exit(EXIT_FAILURE);
-// }
-// int index=!exist(idInfraction, patente);
-//     if(!index){
-//      ticket->infractions[idInfraction-1].multas=realloc(ticket->infractions[idInfraction-1].multas, sizeof(tMulta)*(ticket->infractions[idInfraction-1].dimMultas+1));
-//     ticket->infractions[idInfraction-1].dimMultas++;
-//     index=ticket->infractions[idInfraction-1].dimMultas;
-//     ticket->infractions[idInfraction-1].multas[index].plate= stringCopy(patente);
-// }
-//     ticket->infractions[idInfraction-1].multas[index-1].cantidad++;
-//     ticket->infractions[idInfraction-1].multasTotales++;
-//     addAgency(ticket, idInfraction, agencyName);
-// }
-
-
-
-
-
