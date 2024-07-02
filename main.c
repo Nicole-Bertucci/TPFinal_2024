@@ -1,10 +1,10 @@
 #include <stdio.h>
-#include "ticketsADT.h"
 #include "csvread.h"
+#include "ticketsADT.h"
 
-int main(){
+int main(const char *argv[]){
     ticketsADT new = newTicket();
-    csvReadInfractions(new);
+    csvReadInfractions(argv[FILE_INFRACTION],new);
 
     return 0;
 }

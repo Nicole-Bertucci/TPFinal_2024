@@ -2,6 +2,28 @@
 #define __ticketsADT_h_
 #include <stdio.h>
 
+#define PLATE 10
+
+#ifndef FORMATNYC
+#define FORMATNYC 0
+#endif
+
+#ifndef FORMATCHI
+#define FORMATCHI 0
+#endif
+
+//NYC
+#if FORMATNYC
+#define DESCRIPTION 50
+#define ISSUINGAGENCY 13
+#endif
+
+//CHI
+#if FORMATCHI
+#define DESCRIPTION 30
+#define ISSUINGAGENCY 35
+#endif
+
 typedef struct ticketsCDT* ticketsADT;
 
 //@return retorna un nuevo ticketADT vacio
@@ -31,7 +53,7 @@ void addMulta(ticketsADT ticket, size_t idInfraction, const char* patente, const
 //agrega por orden alfabetico una nueva agencia, si ya existe aborta
 void addAgency (ticketsADT ticket, size_t id, const char* name);
 
-
+void ordenar(ticketsADT ticket);
 //libera los recursos utilizados por ticketsADT
 void free(ticketsADT ticket);
 

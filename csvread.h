@@ -3,9 +3,46 @@
 
 #include "ticketsADT.h"
 
+#define FORMAT_INFRACTION \
+    idInfraction, \
+    description, 
+
+enum INFRACTIONS{
+    FORMAT_INFRACTION
+};
+
+#if FORMATNYC
+#define FORMAT_TICKETS_NYC \
+    plate, \
+    issueDate, \
+    infractionId, \
+    fineAmount, \
+    issuingAgency
+
+enum TICKETSNYC{
+    FORMAT_TICKETS_NYC
+};
+
+#elif FORMATCHI
+#define FORMAT_TICKETS_CHI \
+    issueDate, \
+    plate, \
+    issuingAgency, \
+    infractionId, \
+    fineAmount, \
+
+enum TICKETSCHI{
+    FORMAT_TICKETS_CHI
+}; 
+
+#endif
+#define SEPARATOR ";"    
+#define FILE_INFRACTION 1
+#define FILE_TICKET 2
+
 
 // Funcion que lee el archivo de las infracciones
-void csvReadInfractions(ticketsADT tickets);
+void csvReadInfractions(const char * argv[],ticketsADT tickets);
 
 
 

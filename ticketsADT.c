@@ -4,7 +4,6 @@
 #include <strings.h>
 #include <ctype.h>
 #include <ticketsADT.h>
-
 #define ERRORMEMORIA "Error de asignacion de memoria"
 #define DATOINVALIDO "Dato ingresado es invalido"
 
@@ -43,15 +42,18 @@ ticketsADT newTicket(){
     }
     return new;
 }
-static char * stringCopy(const char * name){
-    size_t largo = strlen(name);
-    char * new = malloc(largo+1);
-    if (new) {
-        perror(ERRORMEMORIA);
-        exit(EXIT_FAILURE);   
-    }
+static char * stringCopy(const char * name, size_t lens){
+    char * new[lens+1]; 
     strcpy(new, name);
     return new;
+}
+
+static comparar(){
+
+}
+
+void ordenar(ticketsADT ticket){
+    qsort(ticket->infractions,ticket->dimInfraction,sizeof(ticket->infractions[0]), comparar);
 }
 
 static tAgency * addAgencyRec(tAgency * agency, size_t id, char * name, size_t * dim){
@@ -72,7 +74,7 @@ static tAgency * addAgencyRec(tAgency * agency, size_t id, char * name, size_t *
         }
         //*dim = id                 revisar esto...
         new->infractionsPopularity[id-1] = 1;
-        new->nameAgency = stringCopy(name);
+        new->nameAgency = stringCopy(name,ISSUINGAGENCY);
         new->next = agency; 
         return new;
     }
@@ -94,7 +96,7 @@ void addInfraction(ticketsADT ticket, size_t id, const char* name){
        ticket->dimInfraction=id;
     }
     if(ticket->infractions[id-1].nameInfr==NULL){
-        ticket->infractions[id-1].nameInfr=stringCopy(name);
+        ticket->infractions[id-1].nameInfr=stringCopy(name,DESCRIPTION);
         ticket->infractions[id-1].dimMultas=0;
         ticket->infractions[id-1].multasTotales=0;
        ticket->infractions[id-1].firstMulta=NULL;
