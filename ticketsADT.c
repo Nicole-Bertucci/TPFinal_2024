@@ -6,6 +6,8 @@
 #include <ticketsADT.h>
 
 #define ERRORMEMORIA "Error de asignacion de memoria"
+#define DATOINVALIDO "Dato ingresado es invalido"
+#define AGENCIAINVALIDA "El nombre de agencia es invalido"
 
 typedef struct tMulta{
     char* plate;
@@ -67,12 +69,8 @@ void addAgency (ticketsADT ticket,  size_t id, char* name){
 
 
 
-//@param ticket ciudad en donde ocurren las multas
-//@param id numero de identificacion de la infraccion
-//@param name descripcion de la infraccion
-//agrega una nueva infraccion en la ciudad, si ya existe aborta
-void addInfraction(ticketsADT ticket, size_t id, char* name){
-    //chequeo si hay espacio
+
+void addInfraction(ticketsADT ticket, size_t id, const char* name){
     if(ticket->dimInfraction<=id-1){
        ticket->infractions= realloc(ticket->infractions, sizeof(tInfraction)*(id));
     }
@@ -85,3 +83,55 @@ void addInfraction(ticketsADT ticket, size_t id, char* name){
     }
 
 }
+
+
+//@param ticket ciudad en donde ocurren las multas
+//@param idInfraccion numero de identificacion de la infraccion
+//@param patente numero de patente a la que se le aplico la multa
+//@param nombre de la agencia que escribe la multa
+// Si la patente no existe en el arreglo agrega al final del arreglo la multa 
+//segun la infraccion dada en @param idInfraccion, en el caso contrario solo
+//aumenta la cantidad de multas de esa patente
+// Aumenta la cantidad de multas de ese tipo de infraccion
+//Aumenta la cantidad de infracciones del tipo generado por la agencia  de nombre agency
+void addMulta(ticketsADT ticket, size_t idInfraction, const char* patente, char* agencyName ){
+if(ticket->dimInfraction<idInfraction){
+    perror(DATOINVALIDO);
+    exit(EXIT_FAILURE);
+}
+int index=!exist(idInfraction, patente);
+if(!index){
+   ticket->infractions[idInfraction-1].multas=realloc(ticket->infractions[idInfraction-1].multas, sizeof(tMulta)*(ticket->infractions[idInfraction-1].dimMultas+1));
+   ticket->infractions[idInfraction-1].dimMultas++;
+   ticket->infractions[idInfraction-1].multas[ticket->infractions[idInfraction-1].dimMultas].plate=malloc(sizeof(patente));
+    strcpy(ticket->infractions[idInfraction-1].multas[ticket->infractions[idInfraction-1].dimMultas-1].plate, patente);
+   index=ticket->infractions[idInfraction-1].dimMultas;
+}
+ticket->infractions[idInfraction-1].multas[index-1].cantidad++;
+ticket->infractions[idInfraction-1].multasTotales++;
+addToAgency(ticket->firstAgency, agencyName, idInfraction);
+}
+
+
+//devuelve el index +1 del arreglo donde esta la patente 
+//o en el caso de lista deja el iterador ahi y devuelve 1 si existe 0 si no
+static int exist(int id, char* plateNumber){
+
+}
+
+//
+static void addToAgency(tAgency *first, char* agencyName, int idInfraction){
+if(first==NULL){
+perror(AGENCIAINVALIDA);
+error(EXIT_FAILURE);
+}
+if(!strcmp(agencyName, first->nameAgency)){
+    first->infractionsPopularity[idInfraction-1]++;
+}
+else{
+    addToAgency(first->next,agencyName, idInfraction);
+    }
+    }
+    
+
+
