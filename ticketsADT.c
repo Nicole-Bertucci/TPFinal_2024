@@ -42,13 +42,51 @@ ticketsADT newTicket(){
     }
     return new;
 }
-static addAgencyRec(tAgency * agency, size_t id, char * name){
-    
+static char * stringCopy(const char * name){
+    size_t largo = strlen(name);
+    char * new = malloc(largo+1);
+    if (new) {
+        perror(ERRORMEMORIA);
+        exit(EXIT_FAILURE);   
+    }
+    strcpy(new, name);
+    return new;
 }
 
-void addAgency (ticketsADT ticket,  size_t id, char* name){
-    ticket->firstAgency = addAgencyRec(ticket->firstAgency, id, name);
+static tAgency * addAgencyRec(tAgency * agency, size_t id, char * name, size_t * dim){
+    int c;
+    if (agency == NULL || (c = strcasecmp(agency->nameAgency, name)) > 0) {
+        tAgency * new = malloc(sizeof(*new));
+        if(new = NULL){
+            perror(ERRORMEMORIA);
+            exit(EXIT_FAILURE);            
+        }
+        if (*dim < id) {
+            new->infractionsPopularity = malloc(id*sizeof(size_t));
+            if(new->infractionsPopularity = NULL){
+                perror(ERRORMEMORIA);
+                exit(EXIT_FAILURE);            
+            }
+            
+        }
+        //*dim = id                 revisar esto...
+        new->infractionsPopularity[id-1] = 1;
+        new->nameAgency = stringCopy(name);
+        new->next = agency; 
+        return new;
+    }
+    if (c == 0) {
+        agency->infractionsPopularity[id-1]++;
+        return agency;
+    }
+    agency->next = addAgencyRec(agency->next, id, name, dim);
+    return agency;
 }
+
+void addAgency (ticketsADT ticket,  size_t id, char * name){
+    ticket->firstAgency = addAgencyRec(ticket->firstAgency, id, name, &ticket->dimInfraction);
+}
+
 
 
 
