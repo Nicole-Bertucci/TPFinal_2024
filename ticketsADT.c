@@ -145,7 +145,7 @@ static void addMultaRec(tMulta* first, const char* patente, size_t *dim){
 }
 
 void addMulta(ticketsADT ticket, int id, const char* patente, const char* agentcyName){
-    if(id>=ticket->dimInfraction){
+    if(id>=ticket->dimInfraction||ticket->infractions[id-1].nameInfr==NULL){
         perror(DATOINVALIDO);
         exit(EXIT_FAILURE);
     }
