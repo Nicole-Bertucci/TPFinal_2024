@@ -9,7 +9,7 @@
 void writeQuery1(ticketsADT ticketAdt);
 
 /**********ideas: ordeno en un arbol las infracciones segun cantidad de multas totales
- ********** lo hago a fuerza bruta y recorro el arreglo mil veces*/
+ ********** recorro el arreglo mil veces*/
 
 //Crea un archivo csv que contiene ordenado alfabeticamente segun el nombre de la agencia:
 // nombre de la agencia, la infraccion mas popular de esta y la cantidad de multas emitidas
@@ -23,7 +23,7 @@ void writeQuery2(ticketsADT ticketAdt);
 void writeQuery3(ticketsADT ticketAdt);
 
 /**********ideas: ordeno en un arbol las infracciones alfabeticamente
- ********** lo hago a fuerza bruta y recorro el arreglo mil veces*/
+ ********** recorro el arreglo mil veces*/
 
 
 
