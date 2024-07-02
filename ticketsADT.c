@@ -17,7 +17,6 @@ typedef struct tMulta{
 
 typedef struct tInfraction{
     char* nameInfr;
-   // tMulta * multas;
     tMulta * firstMulta;
     size_t dimMultas;
     size_t multasTotales;
@@ -105,20 +104,9 @@ void addInfraction(ticketsADT ticket, size_t id, const char* name){
 }
 
 
-
-static tMulta* newMulta(const char* plate){
-    tMulta* new=malloc(sizeof(tMulta));
-    new->plate=stringCopy(plate);
-    new->der=NULL;
-    new->izq=NULL;
-    new->cantidad=1;
-    return new;
-}
-
-
 //si encuentra la patente agrega uno a su cantidad, caso contrario agrega la patente
 //en el lugar correspondiente siguiendo el orden alfabetico;
-static void addMultaRec(tMulta* first, const char* patente){
+static void addMultaRec(tMulta* first, const char* patente, size_t *dim){
     //si es menor
     if(strcmp(patente,first->plate)==0){
         
@@ -130,10 +118,11 @@ static void addMultaRec(tMulta* first, const char* patente){
         if(first->izq==NULL){
             tMulta *new=newMulta(patente);
             first->izq=new;
+            *dim+=1;
         }
         else{
 
-            addMultaRec(first->izq, patente);
+            addMultaRec(first->izq, patente, dim);
         }
      
 
@@ -142,10 +131,11 @@ static void addMultaRec(tMulta* first, const char* patente){
         if(first->der==NULL){
             tMulta *new=newMulta(patente);
             first->der=new;
+            *dim+=1;
         }
         else{
        
-            addMultaRec(first->der, patente);
+            addMultaRec(first->der, patente,dim );
 
         }
    
@@ -161,13 +151,14 @@ void addMulta(ticketsADT ticket, int id, const char* patente, const char* agentc
     }
     if(ticket->infractions[id-1].firstMulta==NULL){
         ticket->infractions[id-1].firstMulta=newMulta(patente);
-    }
+        ticket->infractions[id-1].dimMultas=1;
+   }
     else{
-    addMultaRec(ticket->infractions[id-1].firstMulta, patente);
+    addMultaRec(ticket->infractions[id-1].firstMulta, patente, &(ticket->infractions[id-1].dimMultas));
     }
-    addAgency(ticket, id, agentcyName);
+    ticket->infractions[id-1].multasTotales++;
+    // addAgency(ticket, id, agentcyName);
 }
-
 
 
 //********funcion de prueba, ver como adaptar para QUERY 3 **************/
