@@ -113,8 +113,7 @@ void addInfraction(ticketsADT ticket, size_t id, const char* name){
        ticket->infractions= realloc(ticket->infractions, sizeof(tInfraction)*(id));
     }
     if(ticket->infractions[id-1].nameInfr==NULL){
-        ticket->infractions[id-1].nameInfr=malloc(sizeof(name));
-        strcpy(ticket->infractions[id-1].nameInfr,name);
+        ticket->infractions[id-1].nameInfr=stringCopy(name);
         ticket->infractions[id-1].dimMultas=0;
         ticket->infractions[id-1].multasTotales=0;
         ticket->infractions[id-1].multas=NULL;
@@ -138,16 +137,15 @@ if(ticket->dimInfraction<idInfraction){
     exit(EXIT_FAILURE);
 }
 int index=!exist(idInfraction, patente);
-if(!index){
-   ticket->infractions[idInfraction-1].multas=realloc(ticket->infractions[idInfraction-1].multas, sizeof(tMulta)*(ticket->infractions[idInfraction-1].dimMultas+1));
-   ticket->infractions[idInfraction-1].dimMultas++;
-   ticket->infractions[idInfraction-1].multas[ticket->infractions[idInfraction-1].dimMultas].plate=malloc(sizeof(patente));
-    strcpy(ticket->infractions[idInfraction-1].multas[ticket->infractions[idInfraction-1].dimMultas-1].plate, patente);
-   index=ticket->infractions[idInfraction-1].dimMultas;
+    if(!index){
+     ticket->infractions[idInfraction-1].multas=realloc(ticket->infractions[idInfraction-1].multas, sizeof(tMulta)*(ticket->infractions[idInfraction-1].dimMultas+1));
+    ticket->infractions[idInfraction-1].dimMultas++;
+    index=ticket->infractions[idInfraction-1].dimMultas;
+    ticket->infractions[idInfraction-1].multas[index].plate= stringCopy(patente);
 }
-ticket->infractions[idInfraction-1].multas[index-1].cantidad++;
-ticket->infractions[idInfraction-1].multasTotales++;
-addToAgency(ticket->firstAgency, agencyName, idInfraction);
+    ticket->infractions[idInfraction-1].multas[index-1].cantidad++;
+    ticket->infractions[idInfraction-1].multasTotales++;
+    addAgency(ticket, idInfraction, agencyName);
 }
 
 
@@ -157,19 +155,5 @@ static int exist(int id, char* plateNumber){
 
 }
 
-//
-static void addToAgency(tAgency *first, char* agencyName, int idInfraction){
-if(first==NULL){
-perror(AGENCIAINVALIDA);
-error(EXIT_FAILURE);
-}
-if(!strcmp(agencyName, first->nameAgency)){
-    first->infractionsPopularity[idInfraction-1]++;
-}
-else{
-    addToAgency(first->next,agencyName, idInfraction);
-    }
-    }
-    
 
 
