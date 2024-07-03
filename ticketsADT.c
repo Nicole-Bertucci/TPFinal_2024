@@ -88,7 +88,7 @@ void addAgency (ticketsADT ticket,  size_t id, char * name, size_t position){
 
 void addInfraction(ticketsADT ticket, size_t id, const char* name){
 //para mi si hacemos dimInfraction % BLOQUE == 0 deberia funcionar y no hay necesidad de hacer occupiedInfraction
-    if(ticket->dimInfraction==ticket->occupiedInfraction+1){
+    if(ticket->dimInfraction%BLOQUE==0){
         ticket->infractions= realloc(ticket->infractions, sizeof(tInfraction)*(ticket->dimInfraction+BLOQUE));
        ticket->dimInfraction+=BLOQUE;
     }
@@ -106,7 +106,92 @@ void addInfraction(ticketsADT ticket, size_t id, const char* name){
         }
     }
 }
+//busca el numero de index del arreglo de infracciones segun el numero de identificacion de la infraccion.
+//devuelve el index de la infraccion con ese id, devuelve -1 en el caso de que no exista ese numero de identificacion.
 
+static int findIndexById(const tInfraction* infractions, int id, int dim){
+    if(id<0){
+        perror(DATOINVALIDO);
+        exit(EXIT_FAILURE);
+    }
+
+    for(int min=0, max=dim-1;min<=max;){
+        int i=(max+min)/2;
+        if(infractions[i].idNumber==id){
+            return i;
+        }
+        else if(infractions[i].idNumber<id){
+            min=i+1;
+        }
+        else if(infractions[i].idNumber>id){
+            max=i-1;
+        }
+
+    }
+   
+    
+return -1;
+}
+
+void newInf(const tInfraction* infraction,tInfraction* new, size_t index1, size_t index2){
+     
+        new[index2].dimMultas=infraction[index1].dimMultas;
+     
+        new[index2].idNumber=infraction[index1].idNumber;
+      
+        new[index2].multasTotales=infraction[index1].multasTotales;
+      
+        new[index2].nameInfr=stringCopy(infraction[index1].nameInfr, DESCRIPTION);
+     
+        new[index2].firstMulta=infraction[index1].firstMulta;
+        
+    }
+
+//@return una copia del vector
+tInfraction* cpyInf(const tInfraction * infraction, int dim){
+if(dim<=0){
+    perror(DATOINVALIDO);
+    exit(EXIT_FAILURE);
+}
+tInfraction* new=malloc(sizeof(tInfraction)*dim); 
+    for(int i=0; i<dim; i++){
+        newInf(infraction,new, i,i);
+    }
+    return new;
+}
+
+
+// @return el index de la infraccion con la mayor cantidad de multas segun el dim
+int findMax(tInfraction* infracciones, const size_t dim, int *newIndex){
+    if(dim<0){
+        perror(DATOINVALIDO);
+        exit(EXIT_FAILURE);
+    }
+    int max=0, index=0, change=0, k=0;
+    for(int i=0; i<dim; i++){
+
+     if(infracciones[i].multasTotales==max){
+        if(strcmp(infracciones[i].nameInfr, infracciones[k].nameInfr)<=0){
+            printf("decidi que %s viene antes de %s\n", infracciones[i].nameInfr, infracciones[k].nameInfr);
+                change=1;
+                   
+            }
+        } 
+    if(change==1||infracciones[i].multasTotales>max){
+          max=infracciones[i].multasTotales;
+          k=i;
+          index=infracciones[i].idNumber;
+      
+        }
+        
+        change=0;
+
+    }
+         
+   (*newIndex)=k;
+    return index;
+
+}
 
 static tMulta * newMulta(const char* plate){
     tMulta* new = malloc(sizeof(tMulta));
@@ -150,35 +235,11 @@ static void addMultaRec(tMulta* first, const char* patente, size_t *dim){
     }
 }
 
-//busca el numero de index del arreglo de infracciones segun el numero de identificacion de la infraccion.
-//devuelve el index de la infraccion con ese id, devuelve -1 en el caso de que no exista ese numero de identificacion.
-
-static int busquedaBinaria(tInfraction* infractions, int id, int dim){
-    if(id<0){
-        perror(DATOINVALIDO);
-        exit(EXIT_FAILURE);
-    }
-    int min = 0, max = dim-1;
-    while(min <= max) {
-        int i=(max+min)/2;
-        if(infractions[i].idNumber==id){
-            return i;
-        }
-        else if(infractions[i].idNumber<id){
-            min=i+1;
-        }
-        else if(infractions[i].idNumber>id){
-            max=i-1;
-        }
-    }    
-return -1;
-}
-
 
 void addMulta(ticketsADT ticket, int id, const char* patente, const char* agencyName){
     int index;
  //en lugar de ticket->occupiedInfraction+1 no seria ticket->dimInfraction
-    if(index=busquedaBinaria(ticket->infractions, id, ticket->occupiedInfraction+1)==-1){
+    if(index=findIndexById(ticket->infractions, id, ticket->occupiedInfraction+1)==-1){
 //si da -1 solo hay q saltear el agregado de esa multa, no tirar error
 // solo poner return; 
     return;
