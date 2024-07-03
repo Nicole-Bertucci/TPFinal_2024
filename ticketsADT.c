@@ -6,9 +6,9 @@
 #include <ticketsADT.h>
 #define ERRORMEMORIA "Error de asignacion de memoria"
 #define DATOINVALIDO "Dato ingresado es invalido"
-
+#define BLOQUE 10
 typedef struct tMulta{
-    struct tMulta* izq;
+    struct tMulta *izq;
     struct tMulta *der;
     char* plate;
     size_t cantidad;
@@ -60,116 +60,94 @@ static char * stringCopy(const char * name, size_t lens){
     return new;
 }
 
-static tAgency * addAgencyRec(tAgency * agency, size_t id, char * name, size_t * dim){
+static tAgency * addAgencyRec(tAgency * agency, size_t id, char * name, size_t * dim, size_t position, size_t dimInfraction){
     int c;
-    if (agency == NULL || (c = strcasecmp(agency->nameAgency, name)) > 0) {
+    if (agency == NULL || (c = strcmp(agency->nameAgency, name)) > 0) {
         tAgency * new = malloc(sizeof(*new));
         if(new == NULL){
             perror(ERRORMEMORIA);
             exit(EXIT_FAILURE);            
         }
-        
-        //aca tambien va la busqueda binaria si hacemos que las agencias tengan el vector entero de infracciones inicializadas en 0
-        //sino hacemos lista o hacemos vector desordenado con reallocs
-
-        if (*dim < id) {
-            new->infractionsPopularity = malloc(sizeof(size_t));
-            if(new->infractionsPopularity == NULL){
-                perror(ERRORMEMORIA);
-                exit(EXIT_FAILURE);            
-            }
-            
-        }
-        //*dim = id                 revisar esto...
-        new->infractionsPopularity[id-1] = 1;
+        new->infractionsPopularity[dimInfraction];        
+        new->infractionsPopularity[position-1] = 1;
         new->nameAgency = stringCopy(name,ISSUINGAGENCY);
         new->next = agency; 
         return new;
     }
     if (c == 0) {
-        agency->infractionsPopularity[id-1]++;
+        agency->infractionsPopularity[position-1]++;
         return agency;
     }
-    agency->next = addAgencyRec(agency->next, id, name, dim);
+    agency->next = addAgencyRec(agency->next, id, name, dim, position, dimInfraction);
     return agency;
 }
 
-void addAgency (ticketsADT ticket,  size_t id, char * name){
-    ticket->firstAgency = addAgencyRec(ticket->firstAgency, id, name, &ticket->dimInfraction);
+void addAgency (ticketsADT ticket,  size_t id, char * name, size_t position){
+    ticket->firstAgency = addAgencyRec(ticket->firstAgency, id, name, &ticket->dimInfraction, position, ticket->dimInfraction);
 }
 
-//hay q hacer busqueda binaria por posicion del ID
-
-
 void addInfraction(ticketsADT ticket, size_t id, const char* name){
+//para mi si hacemos dimInfraction % BLOQUE == 0 deberia funcionar y no hay necesidad de hacer occupiedInfraction
     if(ticket->dimInfraction==ticket->occupiedInfraction+1){
         ticket->infractions= realloc(ticket->infractions, sizeof(tInfraction)*(ticket->dimInfraction+BLOQUE));
        ticket->dimInfraction+=BLOQUE;
     }
     int flag=0;
-
+//porque un for, y porque el if de abajo?
     for(int i=ticket->dimInfraction-BLOQUE;i<ticket->dimInfraction&&flag==0;i++){
         if(ticket->infractions[i].nameInfr==NULL){
         ticket->infractions[i].nameInfr=stringCopy(name,DESCRIPTION);
         ticket->infractions[i].dimMultas=0;
         ticket->infractions[i].multasTotales=0;
-       ticket->infractions[i].firstMulta=NULL;
-       ticket->infractions[i].idNumber=id;
-       ticket->occupiedInfraction=i;
-       flag=1;
+        ticket->infractions[i].firstMulta=NULL;
+        ticket->infractions[i].idNumber=id;
+        ticket->occupiedInfraction=i;
+        flag=1;
         }
-
     }
 }
 
 
-void tMulta * newMulta(const char* plate){
-    tMulta* new=malloc(sizeof(tMulta));
-    new->plate=stringCopy(plate);
+static tMulta * newMulta(const char* plate){
+    tMulta* new = malloc(sizeof(tMulta));
+    if(new == NULL){
+        perror(ERRORMEMORIA);
+        exit(EXIT_FAILURE);            
+    }    
+    new->plate=stringCopy(plate,PLATE);
     new->der=NULL;
     new->izq=NULL;
     new->cantidad=1;
     return new;
 }
+
 //si encuentra la patente agrega uno a su cantidad, caso contrario agrega la patente
 //en el lugar correspondiente siguiendo el orden alfabetico;
 static void addMultaRec(tMulta* first, const char* patente, size_t *dim){
-    //si es menor
     int dif= strcmp(patente,first->plate);
-    if(dif==0){
-        
+    if(dif==0) {
         first->cantidad++;
-
     }
-    else if(dif<0){
-        //si hay lugar
-        if(first->izq==NULL){
+    else if(dif<0) {
+        if(first->izq == NULL){
             tMulta *new=newMulta(patente);
             first->izq=new;
             *dim+=1;
         }
         else{
-
             addMultaRec(first->izq, patente, dim);
         }
-     
-
     }
-    else if(dif>0){
-        if(first->der==NULL){
+    else if(dif>0) {
+        if(first->der == NULL){
             tMulta *new=newMulta(patente);
             first->der=new;
             *dim+=1;
         }
         else{
-       
             addMultaRec(first->der, patente,dim );
-
         }
-   
     }
-
-
 }
 
 //busca el numero de index del arreglo de infracciones segun el numero de identificacion de la infraccion.
@@ -180,8 +158,8 @@ static int busquedaBinaria(tInfraction* infractions, int id, int dim){
         perror(DATOINVALIDO);
         exit(EXIT_FAILURE);
     }
-
-    for(int min=0, max=dim-1;min<=max;){
+    int min = 0, max = dim-1;
+    while(min <= max) {
         int i=(max+min)/2;
         if(infractions[i].idNumber==id){
             return i;
@@ -192,30 +170,35 @@ static int busquedaBinaria(tInfraction* infractions, int id, int dim){
         else if(infractions[i].idNumber>id){
             max=i-1;
         }
-
-    }
-   
-    
+    }    
 return -1;
 }
 
 
 void addMulta(ticketsADT ticket, int id, const char* patente, const char* agencyName){
     int index;
+ //en lugar de ticket->occupiedInfraction+1 no seria ticket->dimInfraction
     if(index=busquedaBinaria(ticket->infractions, id, ticket->occupiedInfraction+1)==-1){
-        perror(DATOINVALIDO);
-        exit(EXIT_FAILURE);
+//si da -1 solo hay q saltear el agregado de esa multa, no tirar error
+// solo poner return; 
+    return;
+//extraido del tp 
+//Si al procesar una multa, ésta se refiere a una infracción que no está 
+//incluída en el archivo de infracciones, entonces se ignora esa multa. 
+
+//      perror(DATOINVALIDO);
+//      exit(EXIT_FAILURE);
     }
 
-    if(ticket->infractions[index].firstMulta==NULL){
-        ticket->infractions[index].firstMulta=newMulta(patente);
-        ticket->infractions[index].dimMultas=1;
-   }
+    if(ticket->infractions[index].firstMulta == NULL){
+        ticket->infractions[index].firstMulta = newMulta(patente);
+        ticket->infractions[index].dimMultas = 1;
+    }
     else{
-    addMultaRec(ticket->infractions[index].firstMulta, patente, &(ticket->infractions[index].dimMultas));
+        addMultaRec(ticket->infractions[index].firstMulta, patente, &(ticket->infractions[index].dimMultas));
     }
     ticket->infractions[index].multasTotales++;
-    // addAgency(ticket, index, agencyName);
+    addAgency(ticket, id, agencyName, index);
 }
 
 

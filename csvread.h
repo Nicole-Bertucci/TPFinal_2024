@@ -37,8 +37,8 @@ enum TICKETSCHI{
 
 #endif
 #define SEPARATOR ";"    
-#define FILE_INFRACTION 1
-#define FILE_TICKET 2
+#define FILE_INFRACTION 2
+#define FILE_TICKET 1
 
 
 // Funcion que lee el archivo de las infracciones
