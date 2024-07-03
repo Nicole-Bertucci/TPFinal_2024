@@ -26,6 +26,7 @@
 #endif
 
 #define SEPARATOR ";"    
+#define NEWLINE "\n"
 
 typedef struct ticketsCDT* ticketsADT;
 

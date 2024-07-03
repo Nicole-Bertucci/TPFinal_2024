@@ -89,7 +89,7 @@ void addInfraction(ticketsADT ticket, size_t id, const char* name){
        ticket->dimInfraction+=BLOQUE;
     }
     int i=ticket->occupiedInfraction+1;
-    ticket->infractions[i].nameInfr=stringCopy(name,DESCRIPTION);
+    strcpy(ticket->infractions[i].nameInfr,name);
     ticket->infractions[i].dimMultas=0;
     ticket->infractions[i].multasTotales=0;
     ticket->infractions[i].firstMulta=NULL;
@@ -189,7 +189,7 @@ void newInf(ticketsADT from,ticketsADT to, size_t index1, size_t index2){
         to->infractions[index2].dimMultas=from->infractions[index1].dimMultas;
         to->infractions[index2].idNumber=from->infractions[index1].idNumber;
         to->infractions[index2].multasTotales=from->infractions[index1].multasTotales;
-        to->infractions[index2].nameInfr=stringCopy(from->infractions[index1].nameInfr, DESCRIPTION);
+        strcpy(to->infractions[index2].nameInfr,from->infractions[index1].nameInfr);
         to->infractions[index2].firstMulta=from->infractions[index1].firstMulta;
     }
 
