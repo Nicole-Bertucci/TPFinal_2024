@@ -55,7 +55,7 @@ void ordenar(ticketsADT ticket){
 }
 
 static char * stringCopy(const char * name, size_t lens){
-    char * new[lens+1]; 
+    char new[lens+1]; 
     strcpy(new, name);
     return new;
 }
@@ -133,66 +133,6 @@ static int findIndexById(const tInfraction* infractions, int id, int dim){
 return -1;
 }
 
-void newInf(const tInfraction* infraction,tInfraction* new, size_t index1, size_t index2){
-     
-        new[index2].dimMultas=infraction[index1].dimMultas;
-     
-        new[index2].idNumber=infraction[index1].idNumber;
-      
-        new[index2].multasTotales=infraction[index1].multasTotales;
-      
-        new[index2].nameInfr=stringCopy(infraction[index1].nameInfr, DESCRIPTION);
-     
-        new[index2].firstMulta=infraction[index1].firstMulta;
-        
-    }
-
-//@return una copia del vector
-tInfraction* cpyInf(const tInfraction * infraction, int dim){
-if(dim<=0){
-    perror(DATOINVALIDO);
-    exit(EXIT_FAILURE);
-}
-tInfraction* new=malloc(sizeof(tInfraction)*dim); 
-    for(int i=0; i<dim; i++){
-        newInf(infraction,new, i,i);
-    }
-    return new;
-}
-
-
-// @return el index de la infraccion con la mayor cantidad de multas segun el dim
-int findMax(tInfraction* infracciones, const size_t dim, int *newIndex){
-    if(dim<0){
-        perror(DATOINVALIDO);
-        exit(EXIT_FAILURE);
-    }
-    int max=0, index=0, change=0, k=0;
-    for(int i=0; i<dim; i++){
-
-     if(infracciones[i].multasTotales==max){
-        if(strcmp(infracciones[i].nameInfr, infracciones[k].nameInfr)<=0){
-            printf("decidi que %s viene antes de %s\n", infracciones[i].nameInfr, infracciones[k].nameInfr);
-                change=1;
-                   
-            }
-        } 
-    if(change==1||infracciones[i].multasTotales>max){
-          max=infracciones[i].multasTotales;
-          k=i;
-          index=infracciones[i].idNumber;
-      
-        }
-        
-        change=0;
-
-    }
-         
-   (*newIndex)=k;
-    return index;
-
-}
-
 static tMulta * newMulta(const char* plate){
     tMulta* new = malloc(sizeof(tMulta));
     if(new == NULL){
@@ -240,15 +180,9 @@ void addMulta(ticketsADT ticket, int id, const char* patente, const char* agency
     int index;
  //en lugar de ticket->occupiedInfraction+1 no seria ticket->dimInfraction
     if(index=findIndexById(ticket->infractions, id, ticket->occupiedInfraction+1)==-1){
-//si da -1 solo hay q saltear el agregado de esa multa, no tirar error
-// solo poner return; 
+ 
     return;
-//extraido del tp 
-//Si al procesar una multa, ésta se refiere a una infracción que no está 
-//incluída en el archivo de infracciones, entonces se ignora esa multa. 
 
-//      perror(DATOINVALIDO);
-//      exit(EXIT_FAILURE);
     }
 
     if(ticket->infractions[index].firstMulta == NULL){
@@ -262,6 +196,59 @@ void addMulta(ticketsADT ticket, int id, const char* patente, const char* agency
     addAgency(ticket, id, agencyName, index);
 }
 
+
+void newInf(const tInfraction* infraction,tInfraction* new, size_t index1, size_t index2){
+        new[index2].dimMultas=infraction[index1].dimMultas;
+        new[index2].idNumber=infraction[index1].idNumber;
+        new[index2].multasTotales=infraction[index1].multasTotales;
+        new[index2].nameInfr=stringCopy(infraction[index1].nameInfr, DESCRIPTION);
+        new[index2].firstMulta=infraction[index1].firstMulta;
+    }
+
+//@return una copia del vector
+tInfraction* cpyInf(const tInfraction * infraction, int dim){
+if(dim<=0){
+    perror(DATOINVALIDO);
+    exit(EXIT_FAILURE);
+}
+tInfraction* new=malloc(sizeof(tInfraction)*dim); 
+    for(int i=0; i<dim; i++){
+        newInf(infraction,new, i,i);
+    }
+    return new;
+}
+
+
+// @return el index de la infraccion con la mayor cantidad de multas segun el dim
+int findMax(tInfraction* infracciones, const size_t dim, int *newIndex){
+    if(dim<0){
+        perror(DATOINVALIDO);
+        exit(EXIT_FAILURE);
+    }
+    int max=0, index=0, change=0, k=0;
+    for(int i=0; i<dim; i++){
+
+     if(infracciones[i].multasTotales==max){
+        if(strcmp(infracciones[i].nameInfr, infracciones[k].nameInfr)<=0){
+                change=1;
+                   
+            }
+        } 
+    if(change==1||infracciones[i].multasTotales>max){
+          max=infracciones[i].multasTotales;
+          k=i;
+          index=infracciones[i].idNumber;
+      
+        }
+        
+        change=0;
+
+    }
+         
+   (*newIndex)=k;
+    return index;
+
+}
 
 //********funcion de prueba, ver como adaptar para QUERY 3 **************/
 //lee en orden alfabetico
