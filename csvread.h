@@ -36,7 +36,6 @@ enum TICKETSCHI{
 }; 
 
 #endif
-#define SEPARATOR ";"    
 #define FILE_INFRACTION 2
 #define FILE_TICKET 1
 

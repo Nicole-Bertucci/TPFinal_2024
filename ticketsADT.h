@@ -25,6 +25,8 @@
 #define ISSUINGAGENCY 35
 #endif
 
+#define SEPARATOR ";"    
+
 typedef struct ticketsCDT* ticketsADT;
 
 //Crea un nuevo ticketsADT con todo inicializado
@@ -53,6 +55,7 @@ void addMulta(ticketsADT ticket, size_t id, const char* patente, const char* age
 //@param name nombre de la agencia
 void addAgency (ticketsADT ticket, size_t id, const char* name, size_t position);
 
+void query2(ticketsADT ticket, FILE * query2CSV);
 
 //libera los recursos utilizados por ticketsADT
 void free(ticketsADT ticket);

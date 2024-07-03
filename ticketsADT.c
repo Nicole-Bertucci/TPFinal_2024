@@ -4,18 +4,20 @@
 #include <strings.h>
 #include <ctype.h>
 #include <ticketsADT.h>
-#define ERRORMEMORIA "Error de asignacion de memoria"
+#define ERRORMEMORIA "Error de asignacion de memoria\n"
 #define DATOINVALIDO "Dato ingresado es invalido"
 #define BLOQUE 10
+#define ELEMQ2 3
+
 typedef struct tMulta{
     struct tMulta *izq;
     struct tMulta *der;
-    char* plate;
+    char plate[PLATE];
     size_t cantidad;
 }tMulta;
 
 typedef struct tInfraction{
-    char* nameInfr;
+    char nameInfr[DESCRIPTION];
     tMulta * firstMulta;
     size_t dimMultas;
     size_t multasTotales;
@@ -24,7 +26,7 @@ typedef struct tInfraction{
 
 typedef struct tAgency{
     struct tAgency * next;
-    char* nameAgency;
+    char nameAgency[ISSUINGAGENCY];
     size_t* infractionsPopularity;
 }tAgency;
 
@@ -54,11 +56,6 @@ void ordenar(ticketsADT ticket){
     qsort(ticket->infractions,ticket->dimInfraction,sizeof(ticket->infractions[0]), comparar);
 }
 
-static char * stringCopy(const char * name, size_t lens){
-    char new[lens+1]; 
-    strcpy(new, name);
-    return new;
-}
 
 static tAgency * addAgencyRec(tAgency * agency, size_t id, char * name, size_t * dim, size_t position, size_t dimInfraction){
     int c;
@@ -70,7 +67,7 @@ static tAgency * addAgencyRec(tAgency * agency, size_t id, char * name, size_t *
         }
         new->infractionsPopularity[dimInfraction];        
         new->infractionsPopularity[position-1] = 1;
-        new->nameAgency = stringCopy(name,ISSUINGAGENCY);
+        strcpy(new->nameAgency,name);
         new->next = agency; 
         return new;
     }
@@ -82,7 +79,7 @@ static tAgency * addAgencyRec(tAgency * agency, size_t id, char * name, size_t *
     return agency;
 }
 
-void addAgency (ticketsADT ticket,  size_t id, char * name, size_t position){
+void addAgency(ticketsADT ticket,  size_t id, char * name, size_t position){
     ticket->firstAgency = addAgencyRec(ticket->firstAgency, id, name, &ticket->dimInfraction, position, ticket->dimInfraction);
 }
 
@@ -96,7 +93,7 @@ void addInfraction(ticketsADT ticket, size_t id, const char* name){
 //porque un for, y porque el if de abajo?
     for(int i=ticket->dimInfraction-BLOQUE;i<ticket->dimInfraction&&flag==0;i++){
         if(ticket->infractions[i].nameInfr==NULL){
-        ticket->infractions[i].nameInfr=stringCopy(name,DESCRIPTION);
+        strcpy(ticket->infractions[i].nameInfr,name);
         ticket->infractions[i].dimMultas=0;
         ticket->infractions[i].multasTotales=0;
         ticket->infractions[i].firstMulta=NULL;
@@ -138,8 +135,8 @@ static tMulta * newMulta(const char* plate){
     if(new == NULL){
         perror(ERRORMEMORIA);
         exit(EXIT_FAILURE);            
-    }    
-    new->plate=stringCopy(plate,PLATE);
+    }
+    strcpy(new->plate,plate);
     new->der=NULL;
     new->izq=NULL;
     new->cantidad=1;
@@ -201,7 +198,7 @@ void newInf(const tInfraction* infraction,tInfraction* new, size_t index1, size_
         new[index2].dimMultas=infraction[index1].dimMultas;
         new[index2].idNumber=infraction[index1].idNumber;
         new[index2].multasTotales=infraction[index1].multasTotales;
-        new[index2].nameInfr=stringCopy(infraction[index1].nameInfr, DESCRIPTION);
+        strcpy(new[index2].nameInfr,infraction[index1].nameInfr);
         new[index2].firstMulta=infraction[index1].firstMulta;
     }
 
@@ -249,6 +246,46 @@ int findMax(tInfraction* infracciones, const size_t dim, int *newIndex){
     return index;
 
 }
+
+size_t mostpopular(tAgency * agency, size_t * infraction, size_t dim){
+    if (agency == NULL) {
+        //....................................
+    }
+    size_t aux = 0;
+    size_t i = 0;
+    for (; i < dim; i++){
+        int c;
+        if ((c = agency->infractionsPopularity[i]) > aux) {
+            aux = c;
+        }
+    }
+    *infraction = i;
+    return aux;
+}
+
+void query2(ticketsADT ticket, FILE * query2CSV){
+    for (size_t i = 0; ticket->firstAgency == NULL ; i++) {
+        char * issuingAgency = ticket->firstAgency->nameAgency; 
+        size_t *infraction;  
+        size_t totaltickets = mostpopular(ticket->firstAgency, &infraction,ticket->dimInfraction);
+        char * infractionName = ticket->infractions[*infraction].nameInfr;
+        char line[] = {issuingAgency,infractionName,totaltickets}; 
+        for (int i = 0; i < ELEMQ2; i++) {
+            fputs(line[i],query2CSV);
+            switch (i) {
+            case ELEMQ2-1:
+                fputs(NEWLINE,query2CSV);
+                break;
+            
+            default:
+                fputs(SEPARATOR,query2CSV);
+                break;
+            }
+        }
+    }
+}
+
+
 
 //********funcion de prueba, ver como adaptar para QUERY 3 **************/
 //lee en orden alfabetico

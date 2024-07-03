@@ -8,11 +8,10 @@
 #define READ "rt"
 
 void csvReadInfractions(const char * argv[], ticketsADT tickets){
-
-
+    
     FILE * infractionFile = fopen(argv[FILE_INFRACTION], READ); 
     if (infractionFile == NULL) {
-        perror("Error en la apertura del archivo de infacciones");
+        perror("Error en la apertura del archivo de infacciones\n");
         exit(EXIT_FAILURE);
     }
     char s[LINE];
@@ -50,7 +49,7 @@ void csvReadInfractions(const char * argv[], ticketsADT tickets){
 void csvReadTickets(const char * argv[], ticketsADT tickets) {
     FILE * ticketsFile = fopen(argv[FILE_TICKET], READ); 
     if (ticketsFile == NULL) {
-        perror("Error en la apertura del archivo de tickets");
+        perror("Error en la apertura del archivo de tickets\n");
         exit(EXIT_FAILURE);
     }    
     char s[LINE];
