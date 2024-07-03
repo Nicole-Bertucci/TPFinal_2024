@@ -32,10 +32,10 @@ typedef struct ticketsCDT* ticketsADT;
 //Retorna NULL en caso de error de memoria
 ticketsADT newTicket();
 
+//agrega una nueva infraccion en la ciudad, si ya existe aborta
 //@param ticket ciudad en donde ocurren las multas
 //@param id numero de identificacion de la infraccion
 //@param name descripcion de la infraccion
-//agrega una nueva infraccion en la ciudad, si ya existe aborta
 void addInfraction(ticketsADT ticket, size_t id, const char* name);
 
 //@param ticket ciudad en donde ocurren las multas

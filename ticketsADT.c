@@ -109,9 +109,7 @@ void addInfraction(ticketsADT ticket, size_t id, const char* name){
         ticket->infractions[id-1].dimMultas=0;
         ticket->infractions[id-1].multasTotales=0;
        ticket->infractions[id-1].firstMulta=NULL;
-    }
-
-
+    } 
 }
 
 
