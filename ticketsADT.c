@@ -3,7 +3,7 @@
 #include <string.h>
 #include <strings.h>
 #include <ctype.h>
-#include <ticketsADT.h>
+#include "ticketsADT.h"
 #define ERRORMEMORIA "Error de asignacion de memoria\n"
 #define DATOINVALIDO "Dato ingresado es invalido"
 #define BLOQUE 10
@@ -84,29 +84,22 @@ void addAgency(ticketsADT ticket,  size_t id, char * name, size_t position){
 }
 
 void addInfraction(ticketsADT ticket, size_t id, const char* name){
-//para mi si hacemos dimInfraction % BLOQUE == 0 deberia funcionar y no hay necesidad de hacer occupiedInfraction
     if(ticket->dimInfraction%BLOQUE==0){
         ticket->infractions= realloc(ticket->infractions, sizeof(tInfraction)*(ticket->dimInfraction+BLOQUE));
        ticket->dimInfraction+=BLOQUE;
     }
-    int flag=0;
-//porque un for, y porque el if de abajo?
-    for(int i=ticket->dimInfraction-BLOQUE;i<ticket->dimInfraction&&flag==0;i++){
-        if(ticket->infractions[i].nameInfr==NULL){
-        strcpy(ticket->infractions[i].nameInfr,name);
-        ticket->infractions[i].dimMultas=0;
-        ticket->infractions[i].multasTotales=0;
-        ticket->infractions[i].firstMulta=NULL;
-        ticket->infractions[i].idNumber=id;
-        ticket->occupiedInfraction=i;
-        flag=1;
-        }
-    }
+    int i=ticket->occupiedInfraction+1;
+    ticket->infractions[i].nameInfr=stringCopy(name,DESCRIPTION);
+    ticket->infractions[i].dimMultas=0;
+    ticket->infractions[i].multasTotales=0;
+    ticket->infractions[i].firstMulta=NULL;
+    ticket->infractions[i].idNumber=id;
+    (ticket->occupiedInfraction)++;
+        
 }
 //busca el numero de index del arreglo de infracciones segun el numero de identificacion de la infraccion.
 //devuelve el index de la infraccion con ese id, devuelve -1 en el caso de que no exista ese numero de identificacion.
-
-static int findIndexById(const tInfraction* infractions, int id, int dim){
+size_t findIndexById(const ticketsADT ticketAdt, size_t id, size_t dim){
     if(id<0){
         perror(DATOINVALIDO);
         exit(EXIT_FAILURE);
@@ -114,13 +107,13 @@ static int findIndexById(const tInfraction* infractions, int id, int dim){
 
     for(int min=0, max=dim-1;min<=max;){
         int i=(max+min)/2;
-        if(infractions[i].idNumber==id){
+        if(ticketAdt->infractions[i].idNumber==id){
             return i;
         }
-        else if(infractions[i].idNumber<id){
+        else if(ticketAdt->infractions[i].idNumber<id){
             min=i+1;
         }
-        else if(infractions[i].idNumber>id){
+        else if(ticketAdt->infractions[i].idNumber>id){
             max=i-1;
         }
 
@@ -173,10 +166,9 @@ static void addMultaRec(tMulta* first, const char* patente, size_t *dim){
 }
 
 
-void addMulta(ticketsADT ticket, int id, const char* patente, const char* agencyName){
+void addMulta(ticketsADT ticket, size_t id, const char* patente, const char* agencyName){
     int index;
- //en lugar de ticket->occupiedInfraction+1 no seria ticket->dimInfraction
-    if(index=findIndexById(ticket->infractions, id, ticket->occupiedInfraction+1)==-1){
+    if((index=findIndexById(ticket, id, ticket->occupiedInfraction+1))==-1){
  
     return;
 
@@ -190,34 +182,39 @@ void addMulta(ticketsADT ticket, int id, const char* patente, const char* agency
         addMultaRec(ticket->infractions[index].firstMulta, patente, &(ticket->infractions[index].dimMultas));
     }
     ticket->infractions[index].multasTotales++;
-    addAgency(ticket, id, agencyName, index);
+    // addAgency(ticket, id, agencyName, index);
 }
 
-
-void newInf(const tInfraction* infraction,tInfraction* new, size_t index1, size_t index2){
-        new[index2].dimMultas=infraction[index1].dimMultas;
-        new[index2].idNumber=infraction[index1].idNumber;
-        new[index2].multasTotales=infraction[index1].multasTotales;
-        strcpy(new[index2].nameInfr,infraction[index1].nameInfr);
-        new[index2].firstMulta=infraction[index1].firstMulta;
+void newInf(ticketsADT from,ticketsADT to, size_t index1, size_t index2){
+        to->infractions[index2].dimMultas=from->infractions[index1].dimMultas;
+        to->infractions[index2].idNumber=from->infractions[index1].idNumber;
+        to->infractions[index2].multasTotales=from->infractions[index1].multasTotales;
+        to->infractions[index2].nameInfr=stringCopy(from->infractions[index1].nameInfr, DESCRIPTION);
+        to->infractions[index2].firstMulta=from->infractions[index1].firstMulta;
     }
 
-//@return una copia del vector
-tInfraction* cpyInf(const tInfraction * infraction, int dim){
+//deja en new la copia del vector ticketAdt
+void cpyInf(ticketsADT  ticketAdt, ticketsADT new,  size_t dim){
 if(dim<=0){
     perror(DATOINVALIDO);
     exit(EXIT_FAILURE);
 }
-tInfraction* new=malloc(sizeof(tInfraction)*dim); 
+new->infractions=realloc(new->infractions, sizeof(tInfraction)*dim); 
     for(int i=0; i<dim; i++){
-        newInf(infraction,new, i,i);
+        newInf(ticketAdt,new, i,i);
     }
-    return new;
 }
 
+size_t getOccupied(const ticketsADT ticket){
+    return ticket->occupiedInfraction;
+}
+
+tInfraction * getInfraction(const ticketsADT ticket){
+    return ticket->infractions;
+}
 
 // @return el index de la infraccion con la mayor cantidad de multas segun el dim
-int findMax(tInfraction* infracciones, const size_t dim, int *newIndex){
+size_t findMax(ticketsADT ticketAdt, size_t dim, size_t *newIndex){
     if(dim<0){
         perror(DATOINVALIDO);
         exit(EXIT_FAILURE);
@@ -225,16 +222,17 @@ int findMax(tInfraction* infracciones, const size_t dim, int *newIndex){
     int max=0, index=0, change=0, k=0;
     for(int i=0; i<dim; i++){
 
-     if(infracciones[i].multasTotales==max){
-        if(strcmp(infracciones[i].nameInfr, infracciones[k].nameInfr)<=0){
+     if(ticketAdt->infractions[i].multasTotales==max){
+        if(strcmp(ticketAdt->infractions[i].nameInfr, ticketAdt->infractions[k].nameInfr)<=0){
+            printf("decidi que %s viene antes de %s\n", ticketAdt->infractions[i].nameInfr, ticketAdt->infractions[k].nameInfr);
                 change=1;
                    
             }
         } 
-    if(change==1||infracciones[i].multasTotales>max){
-          max=infracciones[i].multasTotales;
+    if(change==1||ticketAdt->infractions[i].multasTotales>max){
+          max=ticketAdt->infractions[i].multasTotales;
           k=i;
-          index=infracciones[i].idNumber;
+          index=ticketAdt->infractions[i].idNumber;
       
         }
         
@@ -287,6 +285,16 @@ void query2(ticketsADT ticket, FILE * query2CSV){
 
 
 
+
+
+
+size_t getTotalFines(ticketsADT ticket, size_t index){
+    return ticket->infractions[index].multasTotales;
+}
+
+char* getInfractionName(ticketsADT ticket, size_t index){
+    return ticket->infractions[index].nameInfr;
+}
 //********funcion de prueba, ver como adaptar para QUERY 3 **************/
 //lee en orden alfabetico
 static int recorrerMultas(tMulta * first){

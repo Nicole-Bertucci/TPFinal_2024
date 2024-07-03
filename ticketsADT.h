@@ -55,10 +55,24 @@ void addMulta(ticketsADT ticket, size_t id, const char* patente, const char* age
 //@param name nombre de la agencia
 void addAgency (ticketsADT ticket, size_t id, const char* name, size_t position);
 
+size_t getOccupied(ticketsADT ticket);
+
+void newInf(ticketsADT from,ticketsADT to, size_t index1, size_t index2);
+
+void cpyInf(const ticketsADT ticket, ticketsADT new, size_t dim);
+
+
+size_t findMax(ticketsADT ticket, size_t dim, size_t *newIndex);
+
+size_t findIndexById(const ticketsADT ticket, size_t id, size_t dim);
+
+size_t getTotalFines(ticketsADT ticket, size_t index);
+
+char* getInfractionName(ticketsADT ticket, size_t index);
 void query2(ticketsADT ticket, FILE * query2CSV);
 
 //libera los recursos utilizados por ticketsADT
-void free(ticketsADT ticket);
+void freeTicket(ticketsADT ticket);
 
 
 #endif 
