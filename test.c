@@ -13,13 +13,12 @@ int main(void){
     addInfraction(ticketAdt, 1, "JAYWALKING");
     addInfraction(ticketAdt, 12, "F");
     addInfraction(ticketAdt, 5, "SPEEDING");
-    printf("%s\n\n", getInfractionName(ticketAdt,2));
-    printf("%ld\n", getId(ticketAdt, 2));
+ 
     addInfraction(ticketAdt, 14, "AUTOROBADO"); 
     addInfraction(ticketAdt, 24, "LITTERING");
-    // addInfraction(ticketAdt, 214, "Makeshift"); 
-    // addInfraction(ticketAdt, 324, "Destroying"); 
-    // addInfraction(ticketAdt, 74, "M");  
+    addInfraction(ticketAdt, 214, "Makeshift"); 
+    addInfraction(ticketAdt, 324, "Destroying"); 
+    addInfraction(ticketAdt, 74, "M");  
 
     addMulta(ticketAdt, 12, "ABC34","OSCAR FRAUDES" );
     addMulta(ticketAdt, 74, "ABC34","JUAN MECANICO" );

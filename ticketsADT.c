@@ -122,21 +122,15 @@ size_t findIndexById(const ticketsADT ticketAdt, size_t id, size_t dim){
     for(int min=0, max=dim-1;min<=max;){
         int i=(max+min)/2;
         if(ticketAdt->infractions[i].idNumber==id){
-            printf("LLEGUEEE %ld ES IGUAL A %ld\n", ticketAdt->infractions[i].idNumber, id);
             return i;
-            
         }
+
         else if(ticketAdt->infractions[i].idNumber<id){
-           printf("DANDO VUELTAS %ld < %ld\n", ticketAdt->infractions[i].idNumber, id); 
-           printf("minimo pasa de %d a %d\n", min, i+1);
             min=i+1;
-            
         }
+
         else if(ticketAdt->infractions[i].idNumber>id){
-            printf("DANDO VUELTAS %ld > %ld\n", ticketAdt->infractions[i].idNumber, id);
-            printf("maximo pasa de %d a %d\n", max, i-1);
             max=i-1;
-            
         }
 
     }

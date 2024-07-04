@@ -24,12 +24,6 @@ void Query1(ticketsADT ticketAdt){
     ticketsADT new=newTicket();
     
     size_t dim=getOccupied(ticketAdt)+1;
-    printf("***********************************************\n");
-    for(int j=0; j<dim; j++){
-        printf("%s;%ld;%ld\n",getInfractionName(ticketAdt,j),getTotalFines(ticketAdt,j),getId(ticketAdt, j) );
-
-    }
-      printf("***********************************************\n");
     writeHeaderQ1(Q1CSV);
    
     cpyInf(ticketAdt,new, dim);
