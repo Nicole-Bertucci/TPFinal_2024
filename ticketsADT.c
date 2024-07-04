@@ -59,7 +59,7 @@ void ordenar(ticketsADT ticket){
 char * stringCopy(const char* name, size_t lenght){
     int size=sizeof(name);
     if(size>lenght){
-        perror("esta mal");
+        perror(DATOINVALIDO);
         exit(EXIT_FAILURE);
     }
     char* new=malloc(size);
@@ -107,6 +107,7 @@ void addInfraction(ticketsADT ticket, size_t id, const char* name){
     ticket->infractions[i].multasTotales=0;
     ticket->infractions[i].firstMulta=NULL;
     ticket->infractions[i].idNumber=id;
+
     (ticket->occupiedInfraction)++;
         
 }
@@ -121,13 +122,21 @@ size_t findIndexById(const ticketsADT ticketAdt, size_t id, size_t dim){
     for(int min=0, max=dim-1;min<=max;){
         int i=(max+min)/2;
         if(ticketAdt->infractions[i].idNumber==id){
+            printf("LLEGUEEE %ld ES IGUAL A %ld\n", ticketAdt->infractions[i].idNumber, id);
             return i;
+            
         }
         else if(ticketAdt->infractions[i].idNumber<id){
+           printf("DANDO VUELTAS %ld < %ld\n", ticketAdt->infractions[i].idNumber, id); 
+           printf("minimo pasa de %d a %d\n", min, i+1);
             min=i+1;
+            
         }
         else if(ticketAdt->infractions[i].idNumber>id){
+            printf("DANDO VUELTAS %ld > %ld\n", ticketAdt->infractions[i].idNumber, id);
+            printf("maximo pasa de %d a %d\n", max, i-1);
             max=i-1;
+            
         }
 
     }
@@ -181,15 +190,16 @@ static void addMultaRec(tMulta* first, const char* patente, size_t *dim){
 
 void addMulta(ticketsADT ticket, size_t id, const char* patente, const char* agencyName){
     int index;
+    if(ticket->infractions[ticket->occupiedInfraction].idNumber>id){
+    ordenar(ticket);}
     if((index=findIndexById(ticket, id, ticket->occupiedInfraction+1))==-1){
- 
     return;
-
     }
 
     if(ticket->infractions[index].firstMulta == NULL){
         ticket->infractions[index].firstMulta = newMulta(patente);
         ticket->infractions[index].dimMultas = 1;
+
     }
     else{
         addMultaRec(ticket->infractions[index].firstMulta, patente, &(ticket->infractions[index].dimMultas));
@@ -220,6 +230,10 @@ new->infractions=realloc(new->infractions, sizeof(tInfraction)*dim);
 
 size_t getOccupied(const ticketsADT ticket){
     return ticket->occupiedInfraction;
+}
+
+size_t getId(const ticketsADT ticket, size_t index){
+    return ticket->infractions[index].idNumber;
 }
 
 tInfraction * getInfraction(const ticketsADT ticket){

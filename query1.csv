@@ -1,5 +1,6 @@
 infraction;tickets
-F;10
-A;0
-J;0
-S;0
+F;3
+AUTOROBADO;1
+JAYWALKING;1
+SPEEDING;1
+LITTERING;0
