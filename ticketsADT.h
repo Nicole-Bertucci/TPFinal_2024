@@ -60,7 +60,11 @@ char * stringCopy(const char* name, size_t lenght);
 
 void ordenar(ticketsADT ticket);
 
+void sortByAlph(ticketsADT ticket);
+
 size_t getOccupied(ticketsADT ticket);
+
+size_t getId(const ticketsADT ticket, size_t index);
 
 void newInf(ticketsADT from,ticketsADT to, size_t index1, size_t index2);
 
@@ -75,6 +79,8 @@ size_t getTotalFines(ticketsADT ticket, size_t index);
 
 char* getInfractionName(ticketsADT ticket, size_t index);
 void query2(ticketsADT ticket, FILE * query2CSV);
+
+char * plateWithMostFines(ticketsADT ticketAdt,size_t id,size_t * fines);
 
 //libera los recursos utilizados por ticketsADT
 void freeTicket(ticketsADT ticket);

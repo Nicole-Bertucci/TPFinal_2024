@@ -6,6 +6,7 @@
 #include "ticketsADT.h"
 #define ERRORMEMORIA "Error de asignacion de memoria\n"
 #define DATOINVALIDO "Dato ingresado es invalido"
+#define NOPLATES "No plate"
 #define BLOQUE 10
 #define ELEMQ2 3
 
@@ -52,21 +53,20 @@ static int comparar(const void *a, const void *b){
     return (i1->idNumber > i2->idNumber) - (i1->idNumber < i2->idNumber);
 }
 
+static int alf(const void *a, const void *b){
+    tInfraction *i1 = (tInfraction *)a;
+    tInfraction *i2 = (tInfraction *)b;
+    int num=strcmp(i1->nameInfr, i2->nameInfr);
+    return (num<0?-1:(num>0?1:0));
+}
+
 void ordenar(ticketsADT ticket){
     qsort(ticket->infractions,ticket->occupiedInfraction+1,sizeof(tInfraction), &comparar);
 }
 
-char * stringCopy(const char* name, size_t lenght){
-    int size=sizeof(name);
-    if(size>lenght){
-        perror(DATOINVALIDO);
-        exit(EXIT_FAILURE);
-    }
-    char* new=malloc(size);
-    strcpy(new,name);    
-    return new;
+void sortByAlph(ticketsADT ticket){
+    qsort(ticket->infractions, ticket->occupiedInfraction+1, sizeof(tInfraction), &alf);
 }
-
 
 static tAgency * addAgencyRec(tAgency * agency, size_t id, char * name, size_t * dim, size_t position, size_t dimInfraction){
     int c;
@@ -222,18 +222,6 @@ new->infractions=realloc(new->infractions, sizeof(tInfraction)*dim);
     }
 }
 
-size_t getOccupied(const ticketsADT ticket){
-    return ticket->occupiedInfraction;
-}
-
-size_t getId(const ticketsADT ticket, size_t index){
-    return ticket->infractions[index].idNumber;
-}
-
-tInfraction * getInfraction(const ticketsADT ticket){
-    return ticket->infractions;
-}
-
 // @return el index de la infraccion con la mayor cantidad de multas segun el dim
 size_t findMax(ticketsADT ticketAdt, size_t dim, size_t *newIndex){
     if(dim<0){
@@ -266,6 +254,25 @@ size_t findMax(ticketsADT ticketAdt, size_t dim, size_t *newIndex){
     return index;
 
 }
+size_t getOccupied(const ticketsADT ticket){
+    return ticket->occupiedInfraction;
+}
+
+size_t getId(const ticketsADT ticket, size_t index){
+    return ticket->infractions[index].idNumber;
+}
+
+tInfraction * getInfraction(const ticketsADT ticket){
+    return ticket->infractions;
+}
+
+size_t getTotalFines(ticketsADT ticket, size_t index){
+    return ticket->infractions[index].multasTotales;
+}
+
+char* getInfractionName(ticketsADT ticket, size_t index){
+    return ticket->infractions[index].nameInfr;
+}
 
 size_t mostpopular(tAgency * agency, size_t * infraction, size_t dim){
     if (agency == NULL) {
@@ -290,6 +297,7 @@ void query2(ticketsADT ticket, FILE * query2CSV){
         size_t totaltickets = mostpopular(ticket->firstAgency, &infraction,ticket->dimInfraction);
         char * infractionName = ticket->infractions[*infraction].nameInfr;
         char line[] = {issuingAgency,infractionName,totaltickets}; 
+        //cuidado que CREO que como fputs escribe en el archivo es frontEnd
         for (int i = 0; i < ELEMQ2; i++) {
             fputs(line[i],query2CSV);
             switch (i) {
@@ -305,27 +313,74 @@ void query2(ticketsADT ticket, FILE * query2CSV){
     }
 }
 
+void plateWithMostFinesRec(tMulta *first, size_t * fines, char plate[PLATE]){
+    if(first==NULL){
+        return;
+    }
+    plateWithMostFinesRec(first->izq, fines, plate);
+    if(*fines<first->cantidad){
+        *fines=first->cantidad;
+        strcpy(plate, first->plate);
+    }
+    plateWithMostFinesRec(first->der,fines, plate);
 
-
-
-
-
-size_t getTotalFines(ticketsADT ticket, size_t index){
-    return ticket->infractions[index].multasTotales;
 }
 
-char* getInfractionName(ticketsADT ticket, size_t index){
-    return ticket->infractions[index].nameInfr;
+//No funciona probablemente me estoy haciendo lio con *fines
+char * plateWithMostFines(ticketsADT ticketAdt,size_t id,size_t * fines){
+    if(ticketAdt->infractions[id].firstMulta==NULL){
+        *fines=0;
+        return NOPLATES;
+    }
+    *fines=-1;
+    char plate[PLATE];
+    plateWithMostFinesRec(ticketAdt->infractions[id].firstMulta, fines, plate);
+    return plate;
 }
+
 //********funcion de prueba, ver como adaptar para QUERY 3 **************/
-//lee en orden alfabetico
-static int recorrerMultas(tMulta * first){
+// //lee en orden alfabetico
+// static int recorrerMultas(tMulta * first){
 
-        if(first !=NULL){
-        recorrerMultas(first->izq);
-         printf("%s /%ld\n", first->plate, first->cantidad); 
-        recorrerMultas(first->der);
+//         if(first !=NULL){
+//         recorrerMultas(first->izq);
+//          printf("%s /%ld\n", first->plate, first->cantidad); 
+//         recorrerMultas(first->der);
+
+//     }
+//     return 1;
+//     }
+
+
+
+static void freeMultaRec( tMulta*firstMulta){
+    if(firstMulta==NULL){
+        return;
+    }
+    else{
+        freeMultaRec(firstMulta->izq);
+        free(firstMulta);
+        freeMultaRec(firstMulta->der);
+    }
+}
+
+static void freeAgencyRec( tAgency*firstAgency){
+    if(firstAgency==NULL){
+        return;
+    }
+    else{
+        freeAgencyRec(firstAgency->next);
+        free(firstAgency);
 
     }
-    return 1;
+}
+
+void freeTicket(ticketsADT ticketAdt){
+    for(int i=0; i<ticketAdt->dimInfraction; i++){
+        freeMultaRec(ticketAdt->infractions[i].firstMulta);
+        free(ticketAdt->infractions);
     }
+    freeAgencyRec(ticketAdt->firstAgency);
+    free(ticketAdt);
+
+}
