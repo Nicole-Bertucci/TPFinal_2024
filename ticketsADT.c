@@ -346,11 +346,8 @@ void plateWithMostFinesRec(tMulta *first, size_t * fines, char plate[PLATE]){
 //No funciona probablemente me estoy haciendo lio con *fines
 char * plateWithMostFines(ticketsADT ticket,size_t id,size_t * fines, char plate[PLATE]){
     if(ticket->infractions[id].firstMulta==NULL){
-        *fines=0;
-        strcpy(plate, NOPLATES);
         return;
     }
-    *fines=0;
     plateWithMostFinesRec(ticket->infractions[id].firstMulta, fines, plate);
 }
 

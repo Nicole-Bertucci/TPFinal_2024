@@ -83,16 +83,17 @@ void query3(ticketsADT ticket){
 
     for(int id=0; id<getOccupied(ticket)+1; id++){
         plateWithMostFines(ticket,id,&fines,plateAsStr);
+        if (fines != 0) {
+            char *finesAsStr=calloc(1, getSize(fines)+1);
+            if (finesAsStr == NULL) {
+                perror(ERRORMEMORIA);
+                exit(EXIT_FAILURE);
+            }
 
-        char *finesAsStr=calloc(1, getSize(fines)+1);
-        if (finesAsStr == NULL) {
-            perror(ERRORMEMORIA);
-            exit(EXIT_FAILURE);
+            sprintf(finesAsStr, "%zu", fines);
+            writeRowQ3(getInfractionName(ticket, id),plateAsStr,finesAsStr,Q3CSV);
+            free(finesAsStr);
         }
-
-        sprintf(finesAsStr, "%zu", fines);
-        writeRowQ3(getInfractionName(ticket, id),plateAsStr,finesAsStr,Q3CSV);
-        free(finesAsStr);
     }
     fclose(Q3CSV);
 }
