@@ -47,7 +47,7 @@ void writeHeaderQ2(FILE * Q2CSV){
 }  
 
 void writeRowQ2(char *issuingAgency,char * infractionName, char * totaltickets, FILE * Q2CSV){
-    char line[] = {issuingAgency,infractionName,totaltickets}; 
+    char * line[] = {issuingAgency,infractionName,totaltickets}; 
     for (int i = 0; i < MAXQ2; i++) {
         fputs(line[i],Q2CSV);
         switch (i) {

@@ -52,7 +52,7 @@ void query2(ticketsADT ticket){
     writeHeaderQ2(Q2CSV); 
     //beginAgency(ticket) hay q hacer un iterador y modificar las otras funciones creo no estoy seguro, ayuda loco
     char * issuingAgency; 
-    size_t *infraction; 
+    size_t infraction; 
     size_t totaltickets;
     char * infractionName;
 

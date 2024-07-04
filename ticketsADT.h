@@ -54,7 +54,7 @@ void addMulta(ticketsADT ticket, size_t id, const char* patente, const char* age
 //Agrega por orden alfabetico una nueva agencia, si ya existe aborta
 //@param ticket ciudad en donde existe la agencia
 //@param name nombre de la agencia
-void addAgency (ticketsADT ticket, size_t id, char* name, size_t position);
+void addAgency (ticketsADT ticket,char* name, size_t index);
 
 char * stringCopy(const char* name, size_t lenght);
 
@@ -70,7 +70,6 @@ void newInf(ticketsADT from,ticketsADT to, size_t index1, size_t index2);
 
 void cpyInf(const ticketsADT ticket, ticketsADT new, size_t dim);
 
-
 size_t findMax(ticketsADT ticket, size_t dim, size_t *newIndex);
 
 size_t findIndexById(const ticketsADT ticket, size_t id, size_t dim);
@@ -79,8 +78,19 @@ size_t getTotalFines(ticketsADT ticket, size_t index);
 
 char* getInfractionName(ticketsADT ticket, size_t index);
 
-char * plateWithMostFines(ticketsADT ticket,size_t id,size_t * fines, char plate[PLATE]);
+int hasNextAgency(ticketsADT ticket);
 
+void nextAgency(ticketsADT ticket);
+
+char * getNameAgency(ticketsADT ticket);
+
+size_t mostpopular(ticketsADT ticket, size_t * infraction);
+
+void plateWithMostFines(ticketsADT ticket,size_t id,size_t * fines, char plate[PLATE]);
+
+void ordenar(ticketsADT ticket);
+
+void sortByAlph(ticketsADT ticket);
 //libera los recursos utilizados por ticketsADT
 void freeTicket(ticketsADT ticket);
 

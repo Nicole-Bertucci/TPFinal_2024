@@ -4,8 +4,6 @@
 #include "ticketsADT.h"
 #include "front.h"
 
-size_t getSize(size_t n);
-
 //Escribe en un archivo csv el nombre de la infraccion y la cantidad de multas totales de ella
 //Se escribe ordenado de forma descendente segun la cantidad de multas, en caso de empate
 // se ordenan alfabeticamente segun el nombre de la infraccion

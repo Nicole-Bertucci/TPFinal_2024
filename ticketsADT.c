@@ -81,7 +81,7 @@ static int alf(const void *a, const void *b){
 //     qsort(ticket->infractions, ticket->occupiedInfraction + 1, sizeof(tInfraction), (int (*)(const void *, const void *,TipoOrden tipoOrden)) &comparar);
 // }
 
-void ordenar2(ticketsADT ticket){
+void ordenar(ticketsADT ticket){
     qsort(ticket->infractions, ticket->occupiedInfraction+1,sizeof(tInfraction), &comparar);
 }
 
@@ -282,10 +282,10 @@ size_t getOccupied(const ticketsADT ticket){
 size_t getId(const ticketsADT ticket, size_t index){
     return ticket->infractions[index].idNumber;
 }
-
-tInfraction * getInfraction(const ticketsADT ticket){
-    return ticket->infractions;
-}
+//no encontre cuando usas esta funcion
+// tInfraction * getInfraction(const ticketsADT ticket){
+//     return ticket->infractions;
+// }
 
 size_t getTotalFines(ticketsADT ticket, size_t index){
     return ticket->infractions[index].multasTotales;
@@ -321,8 +321,8 @@ char * getNameAgency(ticketsADT ticket){
 int hasNextAgency(ticketsADT ticket){
     return (ticket->firstAgency != NULL);
 }
-void nextAlpha(ticketsADT ticket){
-    if ( !hasNextAlpha(ticket)) {
+void nextAgency(ticketsADT ticket){
+    if ( !hasNextAgency(ticket)) {
         fprintf(stderr, ERRORFIN);
         exit(EXIT_FAILURE);
     } 
@@ -330,7 +330,7 @@ void nextAlpha(ticketsADT ticket){
     return;
 }
 
-void plateWithMostFinesRec(tMulta *first, size_t * fines, char plate[PLATE]){
+static void plateWithMostFinesRec(tMulta *first, size_t * fines, char plate[PLATE]){
     if(first==NULL){
         return;
     }
@@ -344,7 +344,7 @@ void plateWithMostFinesRec(tMulta *first, size_t * fines, char plate[PLATE]){
 }
 
 //No funciona probablemente me estoy haciendo lio con *fines
-char * plateWithMostFines(ticketsADT ticket,size_t id,size_t * fines, char plate[PLATE]){
+void plateWithMostFines(ticketsADT ticket,size_t id,size_t * fines, char plate[PLATE]){
     if(ticket->infractions[id].firstMulta==NULL){
         return;
     }
@@ -372,8 +372,8 @@ static void freeMulta( tMulta*firstMulta){
     }
     else{
         freeMulta(firstMulta->izq);
-        free(firstMulta);
         freeMulta(firstMulta->der);
+        free(firstMulta);
     }
 }
 
