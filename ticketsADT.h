@@ -54,7 +54,11 @@ void addMulta(ticketsADT ticket, size_t id, const char* patente, const char* age
 //Agrega por orden alfabetico una nueva agencia, si ya existe aborta
 //@param ticket ciudad en donde existe la agencia
 //@param name nombre de la agencia
-void addAgency (ticketsADT ticket, size_t id, const char* name, size_t position);
+void addAgency (ticketsADT ticket, size_t id, char* name, size_t position);
+
+char * stringCopy(const char* name, size_t lenght);
+
+void ordenar(ticketsADT ticket);
 
 size_t getOccupied(ticketsADT ticket);
 

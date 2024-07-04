@@ -3,10 +3,13 @@
 
 #include "ticketsADT.h"
 
+FILE * newFile(char * name);
 //Escribe en un archivo csv el nombre de la infraccion y la cantidad de multas totales de ella
 //Se escribe ordenado de forma descendente segun la cantidad de multas, en caso de empate
 // se ordenan alfabeticamente segun el nombre de la infraccion
 void writeQuery1(ticketsADT ticket);
+void writeRowQ1(char*totalFines, char*infractions, FILE * Q1CSV);
+void writeHeaderQ1(FILE * Q1CSV);
 
 //Crea un archivo csv que contiene ordenado alfabeticamente segun el nombre de la agencia:
 // nombre de la agencia, la infraccion mas popular de esta y la cantidad de multas emitidas

@@ -53,7 +53,18 @@ static int comparar(const void *a, const void *b){
 }
 
 void ordenar(ticketsADT ticket){
-    qsort(ticket->infractions,ticket->dimInfraction,sizeof(ticket->infractions[0]), comparar);
+    qsort(ticket->infractions,ticket->occupiedInfraction+1,sizeof(tInfraction), &comparar);
+}
+
+char * stringCopy(const char* name, size_t lenght){
+    int size=sizeof(name);
+    if(size>lenght){
+        perror("esta mal");
+        exit(EXIT_FAILURE);
+    }
+    char* new=malloc(size);
+    strcpy(new,name);    
+    return new;
 }
 
 
@@ -84,8 +95,10 @@ void addAgency(ticketsADT ticket,  size_t id, char * name, size_t position){
 }
 
 void addInfraction(ticketsADT ticket, size_t id, const char* name){
+    
     if(ticket->dimInfraction%BLOQUE==0){
         ticket->infractions= realloc(ticket->infractions, sizeof(tInfraction)*(ticket->dimInfraction+BLOQUE));
+    ticket->occupiedInfraction=(ticket->dimInfraction==0)?-1:(ticket->occupiedInfraction);
        ticket->dimInfraction+=BLOQUE;
     }
     int i=ticket->occupiedInfraction+1;
@@ -224,7 +237,7 @@ size_t findMax(ticketsADT ticketAdt, size_t dim, size_t *newIndex){
 
      if(ticketAdt->infractions[i].multasTotales==max){
         if(strcmp(ticketAdt->infractions[i].nameInfr, ticketAdt->infractions[k].nameInfr)<=0){
-            printf("decidi que %s viene antes de %s\n", ticketAdt->infractions[i].nameInfr, ticketAdt->infractions[k].nameInfr);
+ 
                 change=1;
                    
             }
@@ -232,6 +245,7 @@ size_t findMax(ticketsADT ticketAdt, size_t dim, size_t *newIndex){
     if(change==1||ticketAdt->infractions[i].multasTotales>max){
           max=ticketAdt->infractions[i].multasTotales;
           k=i;
+  
           index=ticketAdt->infractions[i].idNumber;
       
         }
