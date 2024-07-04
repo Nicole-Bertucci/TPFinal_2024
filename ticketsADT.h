@@ -79,7 +79,7 @@ size_t getTotalFines(ticketsADT ticket, size_t index);
 
 char* getInfractionName(ticketsADT ticket, size_t index);
 
-char * plateWithMostFines(ticketsADT ticket,size_t id,size_t * fines);
+char * plateWithMostFines(ticketsADT ticket,size_t id,size_t * fines, char plate[PLATE]);
 
 //libera los recursos utilizados por ticketsADT
 void freeTicket(ticketsADT ticket);

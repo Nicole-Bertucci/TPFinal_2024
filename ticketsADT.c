@@ -9,7 +9,6 @@
 #define NOPLATES "No plate"
 #define BLOQUE 10
 #define ERRORFIN "Error en el recorrido de las Agencias"
-
 typedef struct tMulta{
     struct tMulta *izq;
     struct tMulta *der;
@@ -60,8 +59,30 @@ static int alf(const void *a, const void *b){
     return (num<0?-1:(num>0?1:0));
 }
 
-void ordenar(ticketsADT ticket){
-    qsort(ticket->infractions,ticket->occupiedInfraction+1,sizeof(tInfraction), &comparar);
+// static int comparar(const void *a, const void *b, TipoOrden tipoOrden){
+//     tInfraction *i1 = (tInfraction *)a;
+//     tInfraction *i2 = (tInfraction *)b;
+
+//     if (tipoOrden == ORDEN_POR_ID) {
+//         return (i1->idNumber > i2->idNumber) - (i1->idNumber < i2->idNumber);
+//     } else if (tipoOrden == ORDEN_POR_NOMBRE) {
+//         return strcmp(i1->nameInfr, i2->nameInfr);
+//     } else {
+//         #define ERRORORDENTIPO "Error en el Tipo de Orden a realizar"
+//         perror(ERRORORDENTIPO);
+//         exit(EXIT_FAILURE);
+//     }
+// }
+// typedef enum {
+//     ORDEN_POR_ID,
+//     ORDEN_POR_NOMBRE
+// } TipoOrden;
+// void ordenar(ticketsADT ticket, TipoOrden tipoOrden){
+//     qsort(ticket->infractions, ticket->occupiedInfraction + 1, sizeof(tInfraction), (int (*)(const void *, const void *,TipoOrden tipoOrden)) &comparar);
+// }
+
+void ordenar2(ticketsADT ticket){
+    qsort(ticket->infractions, ticket->occupiedInfraction+1,sizeof(tInfraction), &comparar);
 }
 
 void sortByAlph(ticketsADT ticket){
@@ -323,15 +344,14 @@ void plateWithMostFinesRec(tMulta *first, size_t * fines, char plate[PLATE]){
 }
 
 //No funciona probablemente me estoy haciendo lio con *fines
-char * plateWithMostFines(ticketsADT ticket,size_t id,size_t * fines){
+char * plateWithMostFines(ticketsADT ticket,size_t id,size_t * fines, char plate[PLATE]){
     if(ticket->infractions[id].firstMulta==NULL){
         *fines=0;
-        return NOPLATES;
+        strcpy(plate, NOPLATES);
+        return;
     }
-    *fines=-1;
-    char plate[PLATE];
+    *fines=0;
     plateWithMostFinesRec(ticket->infractions[id].firstMulta, fines, plate);
-    return plate;
 }
 
 //********funcion de prueba, ver como adaptar para QUERY 3 **************/

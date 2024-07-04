@@ -82,9 +82,9 @@ void query3(ticketsADT ticket){
     char plateAsStr[PLATE];    
 
     for(int id=0; id<getOccupied(ticket)+1; id++){
-        //no funciona plateWithMostFines
-        strcpy(plateAsStr, plateWithMostFines(ticket,id,&fines));
-        char *finesAsStr=calloc(1, getSize(fines));
+        plateWithMostFines(ticket,id,&fines,plateAsStr);
+
+        char *finesAsStr=calloc(1, getSize(fines)+1);
         if (finesAsStr == NULL) {
             perror(ERRORMEMORIA);
             exit(EXIT_FAILURE);
