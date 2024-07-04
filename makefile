@@ -9,10 +9,10 @@ FORMATCHI = -DFORMATCHI\=1
 all: programNYC programCHI clean
 
 programNYC: $(MAIN) csvreadNYC.o front.o ticketsADT.o queries.o
-	$(COMPILER) csvreadNYC.o front.o queries.o ticketsADT.o $(MAIN) -o parkingTicketsNYC $(CFLAGS)
+	$(COMPILER) $(CFLAGS) csvreadNYC.o front.o queries.o ticketsADT.o $(MAIN) -o parkingTicketsNYC 
 
 programCHI: $(MAIN) csvreadCHI.o front.o ticketsADT.o queries.o
-	$(COMPILER) csvreadCHI.o front.o queries.o ticketsADT.o $(MAIN) -o parkingTicketsCHI $(CFLAGS)
+	$(COMPILER) $(CFLAGS) csvreadCHI.o front.o queries.o ticketsADT.o $(MAIN) -o parkingTicketsCHI 
 
 ticketsADT.o: ticketsADT.c
 	$(COMPILER) $(CFLAGS) -c ticketsADT.c

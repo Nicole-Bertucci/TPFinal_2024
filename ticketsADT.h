@@ -17,12 +17,12 @@
 #if FORMATNYC
 #define DESCRIPTION 50
 #define ISSUINGAGENCY 13
-#endif
 
 //CHI
-#if FORMATCHI
+#elif FORMATCHI
 #define DESCRIPTION 30
 #define ISSUINGAGENCY 35
+
 #endif
 
 #define SEPARATOR ";"    
@@ -84,7 +84,7 @@ void nextAgency(ticketsADT ticket);
 
 char * getNameAgency(ticketsADT ticket);
 
-size_t mostpopular(ticketsADT ticket, size_t * infraction);
+size_t mostpopular(ticketsADT ticket, size_t * index);
 
 void plateWithMostFines(ticketsADT ticket,size_t id,size_t * fines, char plate[PLATE]);
 

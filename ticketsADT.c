@@ -296,21 +296,21 @@ char* getInfractionName(ticketsADT ticket, size_t index){
 }
 
 //Q2
-size_t mostpopular(ticketsADT ticket, size_t * infraction){
+size_t mostpopular(ticketsADT ticket, size_t * index){
     if (ticket->firstAgency == NULL) {
         fprintf(stderr, ERRORFIN);
         exit(EXIT_FAILURE);        
     }
     size_t aux = 0;
-    size_t index = 0;
+    size_t auxindex = 0;
     for (size_t i = 0; i < ticket->dimInfraction; i++){
         int c;
         if ((c = ticket->firstAgency->infractionsPopularity[i]) > aux) {
             aux = c;
-            index = i;
+            auxindex = i;
         }
     }
-    *infraction = index;
+    *index = auxindex;
     return aux;
 }
 
