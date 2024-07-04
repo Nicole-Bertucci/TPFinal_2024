@@ -5,9 +5,11 @@
 #define WRITE "wt"
 #define OPENCSV "Error en la apertura del archivo\n"
 #define MAXQ1 2
-#define LASTQ1 1
+#define LASTQ1 MAXQ1-1
+#define MAXQ2 3
+#define LASTQ2 MAXQ2-1
 #define MAXQ3 3
-#define LASTQ3 2
+#define LASTQ3 MAXQ3-1
 
 FILE * newFile(char * name){
     FILE * file=fopen(name,WRITE);
@@ -40,18 +42,24 @@ void writeRowQ1(char*totalFines, char*infractions, FILE * Q1CSV){
     }
 }
 
-  
+void writeHeaderQ2(FILE * Q2CSV){
+   fputs("issuingAgency;infraction;tickets\n",Q2CSV);
+}  
 
-
-//Crea un archivo csv que contiene ordenado alfabeticamente segun el nombre de la agencia:
-// nombre de la agencia, la infraccion mas popular de esta y la cantidad de multas emitidas
-//En caso de empate se ubican alfabeticamente segun el nombre de infraccion
-void writeQuery2(ticketsADT ticket){
-    FILE *  query2CSV = newFile("query2.csv");
-    char * firstline = "issuingAgency;infraction;tickets\n";
-    fputs(firstline,query2CSV);
-    query2(ticket,query2CSV);
-    fclose(query2CSV);
+void writeRowQ2(char *issuingAgency,char * infractionName, char * totaltickets, FILE * Q2CSV){
+    char line[] = {issuingAgency,infractionName,totaltickets}; 
+    for (int i = 0; i < MAXQ2; i++) {
+        fputs(line[i],Q2CSV);
+        switch (i) {
+        case LASTQ2:
+            fputs(NEWLINE,Q2CSV);
+            break;
+        
+        default:
+            fputs(SEPARATOR,Q2CSV);
+            break;
+        }
+    }
 }
 
 

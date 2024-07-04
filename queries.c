@@ -4,6 +4,8 @@
 
 #include "ticketsADT.h"
 #include "front.h"
+#include "queries.h"
+#define ERRORMEMORIA "Error de asignacion de memoria\n"
 
 
 static size_t getSize(size_t n){
@@ -20,46 +22,79 @@ static size_t getSize(size_t n){
     return size;
 }
 
-void query1(ticketsADT ticketAdt){
+void query1(ticketsADT ticket){
     FILE * Q1CSV=newFile("query1.csv");
     size_t index, id, indexNew=0;
     ticketsADT new=newTicket();
-    size_t dim=getOccupied(ticketAdt)+1;
+    size_t dim=getOccupied(ticket)+1;
     writeHeaderQ1(Q1CSV);
-    cpyInf(ticketAdt,new, dim);
+    cpyInf(ticket,new, dim);
     
     for(size_t i=0, dimNew=dim; i<dimNew; dimNew=dimNew-1){
         id=findMax(new, dimNew, &indexNew);
-        index=findIndexById(ticketAdt, id,dim );
+        index=findIndexById(ticket, id,dim );
         
-        size_t total=getTotalFines(ticketAdt, index);
+        size_t total=getTotalFines(ticket, index);
         
         char* finesAsStr=calloc(1, getSize(total)+1);
         char infrName[DESCRIPTION];
-        strcpy(infrName,getInfractionName(ticketAdt, index));
+        strcpy(infrName,getInfractionName(ticket, index));
         sprintf(finesAsStr, "%zu", total);
         writeRowQ1(finesAsStr, infrName,Q1CSV);
         newInf(new,new,dimNew-1, indexNew);
         free(finesAsStr);
+    }
+    fclose(Q1CSV);    
+}
+
+void query2(ticketsADT ticket){
+    FILE *  Q2CSV = newFile("query2.csv");
+    writeHeaderQ2(Q2CSV); 
+    //beginAgency(ticket) hay q hacer un iterador y modificar las otras funciones creo no estoy seguro, ayuda loco
+    char * issuingAgency; 
+    size_t *infraction; 
+    size_t totaltickets;
+    char * infractionName;
+
+    for (size_t i = 0; hasNextAgency(ticket) ; i++) {
+        issuingAgency = getNameAgency(ticket); 
+        totaltickets = mostpopular(ticket, &infraction);
+        infractionName = getInfractionName(ticket, &infraction);
+        char * stringTotalTickets = calloc(1, getSize(totaltickets)+1);
+        if (stringTotalTickets == NULL){
+            perror(ERRORMEMORIA);
+            exit(EXIT_FAILURE);           
         }
+        sprintf(stringTotalTickets,"%zu",totaltickets);
+        writeRowQ2(issuingAgency,infractionName,stringTotalTickets, Q2CSV);
+        free(stringTotalTickets);
+        nextAgency(ticket);
+    }
+    fclose(Q2CSV);    
 }
 
 
-void query3(ticketsADT ticketAdt){
+void query3(ticketsADT ticket){
     FILE * Q3CSV =newFile("query3.csv");
     writeHeaderQ3(Q3CSV);
-    sortByAlph(ticketAdt);
+    sortByAlph(ticket);
     size_t fines=0;
     char plateAsStr[PLATE];    
 
-    for(int id=0; id<getOccupied(ticketAdt)+1; id++){
+    for(int id=0; id<getOccupied(ticket)+1; id++){
         //no funciona plateWithMostFines
-       strcpy(plateAsStr, plateWithMostFines(ticketAdt,id,&fines));
-       char *finesAsStr=calloc(1, getSize(fines));
-       sprintf(finesAsStr, "%zu", fines);
-       writeRowQ3(getInfractionName(ticketAdt, id),plateAsStr,finesAsStr,Q3CSV);
-       free(finesAsStr);
+        strcpy(plateAsStr, plateWithMostFines(ticket,id,&fines));
+        char *finesAsStr=calloc(1, getSize(fines));
+        if (finesAsStr == NULL) {
+            perror(ERRORMEMORIA);
+            exit(EXIT_FAILURE);
+        }
+
+        sprintf(finesAsStr, "%zu", fines);
+        writeRowQ3(getInfractionName(ticket, id),plateAsStr,finesAsStr,Q3CSV);
+        free(finesAsStr);
     }
+    fclose(Q3CSV);
 }
 
 

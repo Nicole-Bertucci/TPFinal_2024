@@ -31,7 +31,7 @@
 typedef struct ticketsCDT* ticketsADT;
 
 //Crea un nuevo ticketsADT con todo inicializado
-//@return retorna un nuevo ticketADT vacio o retorna NULL en caso de error de memoria
+//@return retorna un nuevo ticketsADT vacio o retorna NULL en caso de error de memoria
 ticketsADT newTicket();
 
 //agrega una nueva infraccion en la ciudad, si ya existe aborta
@@ -78,9 +78,8 @@ size_t findIndexById(const ticketsADT ticket, size_t id, size_t dim);
 size_t getTotalFines(ticketsADT ticket, size_t index);
 
 char* getInfractionName(ticketsADT ticket, size_t index);
-void query2(ticketsADT ticket, FILE * query2CSV);
 
-char * plateWithMostFines(ticketsADT ticketAdt,size_t id,size_t * fines);
+char * plateWithMostFines(ticketsADT ticket,size_t id,size_t * fines);
 
 //libera los recursos utilizados por ticketsADT
 void freeTicket(ticketsADT ticket);

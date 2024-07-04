@@ -7,8 +7,8 @@
 #define LINE 250
 #define READ "rt"
 
-void csvReadInfractions(const char * argv[], ticketsADT tickets){
-    
+void csvReadInfractions(const char * argv[], ticketsADT ticket){
+
     FILE * infractionFile = fopen(argv[FILE_INFRACTION], READ); 
     if (infractionFile == NULL) {
         perror("Error en la apertura del archivo de infacciones\n");
@@ -37,16 +37,16 @@ void csvReadInfractions(const char * argv[], ticketsADT tickets){
             token = strtok(NULL,SEPARATOR);
             
             }
-            addInfraction(tickets,id,name);
+            addInfraction(ticket,id,name);
         }       
     }
     fclose(infractionFile);
     //falta la funciones para ordenar el vector de infracciones
-    ordenar(tickets);
-    csvReadTickets(argv,tickets);
+    ordenar(ticket);
+    csvReadTickets(argv,ticket);
 }
 
-void csvReadTickets(const char * argv[], ticketsADT tickets) {
+void csvReadTickets(const char * argv[], ticketsADT ticket) {
     FILE * ticketsFile = fopen(argv[FILE_TICKET], READ); 
     if (ticketsFile == NULL) {
         perror("Error en la apertura del archivo de tickets\n");
@@ -79,7 +79,7 @@ void csvReadTickets(const char * argv[], ticketsADT tickets) {
                 }
             token = strtok(NULL,SEPARATOR);
             }
-            addMulta(tickets,id,plate,agency);
+            addMulta(ticket,id,plate,agency);
         }       
     }
     fclose(ticketsFile);
