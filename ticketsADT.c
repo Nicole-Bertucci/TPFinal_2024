@@ -116,7 +116,7 @@ void resize(ticketsADT ticket) {
     }
     //ticket->dimInfraction = ticket->occupiedInfraction;
 }
-
+//44
 static tMulta * newMulta(const char* plate){
     tMulta* new = malloc(sizeof(tMulta));
     if(new == NULL){

@@ -23,7 +23,7 @@ FILE * newFile(char * name){
 void writeHeaderQ1(FILE * Q1CSV){
  fputs("infraction;tickets\n",Q1CSV);
 }
-
+//borrar
 void writeRowQ1(char*totalFines, char*infractions, FILE * Q1CSV){
   char * row[]={infractions, totalFines};
      for (int i=0; i<MAXQ1; i++)

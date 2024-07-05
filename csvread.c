@@ -47,7 +47,7 @@ void csvReadInfractions(const char * argv[], ticketsADT ticket){
     sortByID(ticket);
     csvReadTickets(argv,ticket);
 }
-
+//borrar
 void csvReadTickets(const char * argv[], ticketsADT ticket) {
     FILE * ticketsFile = fopen(argv[FILE_TICKET], READ); 
     if (ticketsFile == NULL) {

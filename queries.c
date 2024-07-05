@@ -47,7 +47,7 @@ static size_t getSize(size_t n){
 //     }
 //     fclose(Q1CSV);    
 // }
-
+//borrar
 void query1(ticketsADT ticket){
     FILE * Q1CSV=newFile("query1.csv");
     writeHeaderQ1(Q1CSV);
