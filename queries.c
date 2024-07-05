@@ -5,6 +5,7 @@
 #include "ticketsADT.h"
 #include "front.h"
 #include "queries.h"
+
 #define ERRORMEMORIA "Error de asignacion de memoria\n"
 
 
@@ -22,27 +23,51 @@ static size_t getSize(size_t n){
     return size;
 }
 
+// void query1(ticketsADT ticket){
+//     FILE * Q1CSV=newFile("query1.csv");
+//     writeHeaderQ1(Q1CSV);
+//     size_t index, id, indexNew=0;
+//     ticketsADT new=newTicket();
+//     size_t dim=getOccupied(ticket)+1;
+//     cpyInf(ticket,new, dim);
+    
+//     for(size_t i=0, dimNew=dim; i<dimNew; dimNew=dimNew-1){
+//         id=findMax(new, dimNew, &indexNew);
+//         index=findIndexById(ticket, id,dim );
+        
+//         size_t total=getTotalFines(ticket, index);
+        
+//         char* finesAsStr=calloc(1, getSize(total)+1);
+//         char infrName[DESCRIPTION];
+//         strcpy(infrName,getInfractionName(ticket, index));
+//         sprintf(finesAsStr, "%zu", total);
+//         writeRowQ1(finesAsStr, infrName,Q1CSV);
+//         newInf(new,new,dimNew-1, indexNew);
+//         free(finesAsStr);
+//     }
+//     fclose(Q1CSV);    
+// }
+
+
 void query1(ticketsADT ticket){
     FILE * Q1CSV=newFile("query1.csv");
     writeHeaderQ1(Q1CSV);
-    size_t index, id, indexNew=0;
-    ticketsADT new=newTicket();
-    size_t dim=getOccupied(ticket)+1;
-    cpyInf(ticket,new, dim);
-    
-    for(size_t i=0, dimNew=dim; i<dimNew; dimNew=dimNew-1){
-        id=findMax(new, dimNew, &indexNew);
-        index=findIndexById(ticket, id,dim );
-        
-        size_t total=getTotalFines(ticket, index);
-        
-        char* finesAsStr=calloc(1, getSize(total)+1);
-        char infrName[DESCRIPTION];
-        strcpy(infrName,getInfractionName(ticket, index));
-        sprintf(finesAsStr, "%zu", total);
-        writeRowQ1(finesAsStr, infrName,Q1CSV);
-        newInf(new,new,dimNew-1, indexNew);
-        free(finesAsStr);
+    size_t totaltickets;
+    char * infractionName;
+    char * stringTotalTickets;
+    sortByTotal(ticket);
+    size_t cant = getOccupied(ticket);
+    for(size_t i=0; i<cant; i++){
+        infractionName = getInfractionName(ticket, i);        
+        totaltickets = getTotalFines(ticket, i);
+         stringTotalTickets = calloc(1, getSize(totaltickets)+1);
+        if (stringTotalTickets == NULL){
+            perror(ERRORMEMORIA);
+            exit(EXIT_FAILURE);           
+        }
+        sprintf(stringTotalTickets, "%zu", totaltickets);
+        writeRowQ1(stringTotalTickets, infractionName,Q1CSV);
+        free(stringTotalTickets);
     }
     fclose(Q1CSV);    
 }
@@ -84,7 +109,6 @@ void query3(ticketsADT ticket){
     for(int id=0; id<getOccupied(ticket)+1; id++){
         fines=0;
         plateWithMostFines(ticket,id,&fines,plateAsStr);
-        printf(" %d,%zu  ",id,fines);
         if (fines != 0) {
             char *finesAsStr=calloc(1, getSize(fines)+1);
             if (finesAsStr == NULL) {
@@ -99,7 +123,3 @@ void query3(ticketsADT ticket){
     }
     fclose(Q3CSV);
 }
-
-
-
-

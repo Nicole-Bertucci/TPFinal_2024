@@ -30,7 +30,6 @@ void csvReadInfractions(const char * argv[], ticketsADT ticket){
                 
                 case description:
                     name = token;
-                    name[strcspn(name, "\n")] = '\0';
                     break;
 
                 default:
@@ -44,8 +43,8 @@ void csvReadInfractions(const char * argv[], ticketsADT ticket){
     }
     fclose(infractionFile);
     printf("infraction finalizo\n");
-
-    ordenar(ticket);
+    resize(ticket);
+    sortByID(ticket);
     printf("orden finalizo\n");
 
     csvReadTickets(argv,ticket);

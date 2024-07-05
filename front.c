@@ -10,7 +10,7 @@
 #define LASTQ2 MAXQ2-1
 #define MAXQ3 3
 #define LASTQ3 MAXQ3-1
-
+#define SEPARAT ";"  
 FILE * newFile(char * name){
     FILE * file=fopen(name,WRITE);
     if(file==NULL){
@@ -36,7 +36,7 @@ void writeRowQ1(char*totalFines, char*infractions, FILE * Q1CSV){
             break;
         
         default:
-            fputs(SEPARATOR,Q1CSV);
+            fputs(SEPARAT,Q1CSV);
             break;
         }
     }
@@ -56,7 +56,7 @@ void writeRowQ2(char *issuingAgency,char * infractionName, char * totaltickets, 
             break;
         
         default:
-            fputs(SEPARATOR,Q2CSV);
+            fputs(SEPARAT,Q2CSV);
             break;
         }
     }
@@ -78,7 +78,7 @@ void writeRowQ3(char *infraction, char* plate, char* fine, FILE * Q3CSV){
             break;
         
         default:
-            fputs(SEPARATOR,Q3CSV);
+            fputs(SEPARAT,Q3CSV);
             break;
         }
     }

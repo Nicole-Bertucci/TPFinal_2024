@@ -4,6 +4,8 @@
 #include <strings.h>
 #include <ctype.h>
 #include "ticketsADT.h"
+#include "csvread.h"
+
 #define ERRORMEMORIA "Error de asignacion de memoria\n"
 #define DATOINVALIDO "Dato ingresado es invalido"
 #define NOPLATES "No plate"
@@ -47,48 +49,39 @@ ticketsADT newTicket(){
     }
     return new;
 }
+
 static int comparar(const void *a, const void *b){
     tInfraction *i1 = (tInfraction *)a;
     tInfraction *i2 = (tInfraction *)b;
     return (i1->idNumber > i2->idNumber) - (i1->idNumber < i2->idNumber);
 }
+void sortByID(ticketsADT ticket){
+    qsort(ticket->infractions, ticket->occupiedInfraction+1,sizeof(tInfraction), &comparar);
+}
 
 static int alf(const void *a, const void *b){
     tInfraction *i1 = (tInfraction *)a;
     tInfraction *i2 = (tInfraction *)b;
-    int num=strcmp(i1->nameInfr, i2->nameInfr);
-    return (num<0?-1:(num>0?1:0));
+    return strcmp(i1->nameInfr, i2->nameInfr);
 }
-
-// static int comparar(const void *a, const void *b, TipoOrden tipoOrden){
-//     tInfraction *i1 = (tInfraction *)a;
-//     tInfraction *i2 = (tInfraction *)b;
-
-//     if (tipoOrden == ORDEN_POR_ID) {
-//         return (i1->idNumber > i2->idNumber) - (i1->idNumber < i2->idNumber);
-//     } else if (tipoOrden == ORDEN_POR_NOMBRE) {
-//         return strcmp(i1->nameInfr, i2->nameInfr);
-//     } else {
-//         #define ERRORORDENTIPO "Error en el Tipo de Orden a realizar"
-//         perror(ERRORORDENTIPO);
-//         exit(EXIT_FAILURE);
-//     }
-// }
-// typedef enum {
-//     ORDEN_POR_ID,
-//     ORDEN_POR_NOMBRE
-// } TipoOrden;
-// void ordenar(ticketsADT ticket, TipoOrden tipoOrden){
-//     qsort(ticket->infractions, ticket->occupiedInfraction + 1, sizeof(tInfraction), (int (*)(const void *, const void *,TipoOrden tipoOrden)) &comparar);
-// }
-
-void ordenar(ticketsADT ticket){
-    qsort(ticket->infractions, ticket->occupiedInfraction+1,sizeof(tInfraction), &comparar);
-}
-
 void sortByAlph(ticketsADT ticket){
     qsort(ticket->infractions, ticket->occupiedInfraction+1, sizeof(tInfraction), &alf);
 }
+
+
+static int cmp(const void *a, const void *b){
+    tInfraction *i1 = (tInfraction *)a;
+    tInfraction *i2 = (tInfraction *)b;
+    int c = i2->multasTotales - i1->multasTotales;
+    if (c == 0) {
+        c = strcmp(i1->nameInfr,i2->nameInfr);
+    }
+    return c;
+}
+void sortByTotal(ticketsADT ticket){
+    qsort(ticket->infractions, ticket->occupiedInfraction+1, sizeof(tInfraction), &cmp);
+}
+
 
 static tAgency * addAgencyRec(tAgency * agency, const char * name, size_t index, size_t dimInfraction){
     int c;
@@ -96,7 +89,7 @@ static tAgency * addAgencyRec(tAgency * agency, const char * name, size_t index,
         tAgency * new = malloc(sizeof(*new));
         if(new == NULL){
             perror(ERRORMEMORIA);
-            exit(EXIT_FAILURE);            
+            exit(EXIT_FAILURE);
         }
         new->infractionsPopularity = calloc(dimInfraction, sizeof(size_t));
         if (new->infractionsPopularity == NULL) {
@@ -105,7 +98,7 @@ static tAgency * addAgencyRec(tAgency * agency, const char * name, size_t index,
         }
         new->infractionsPopularity[index] = 1;
         strcpy(new->nameAgency,name);
-        new->next = agency; 
+        new->next = agency;
         return new;
     }
     if (c == 0) {
@@ -121,20 +114,24 @@ void addAgency(ticketsADT ticket, const char * name, size_t index){
 }
 
 void addInfraction(ticketsADT ticket, size_t id, const char* name){
-    if(ticket->dimInfraction%BLOQUE==0){
+    if(ticket->occupiedInfraction%BLOQUE==0){
         ticket->infractions= realloc(ticket->infractions, sizeof(tInfraction)*(ticket->dimInfraction+BLOQUE));
-    ticket->occupiedInfraction=(ticket->dimInfraction==0)?-1:(ticket->occupiedInfraction);
-       ticket->dimInfraction+=BLOQUE;
+        ticket->occupiedInfraction=(ticket->dimInfraction==0)?-1:(ticket->occupiedInfraction);
+        ticket->dimInfraction+=BLOQUE;
     }
-    int i=ticket->occupiedInfraction+1;
+    int i = ticket->occupiedInfraction+1;
     strcpy(ticket->infractions[i].nameInfr,name);
     ticket->infractions[i].dimMultas=0;
     ticket->infractions[i].multasTotales=0;
     ticket->infractions[i].firstMulta=NULL;
     ticket->infractions[i].idNumber=id;
 
-    (ticket->occupiedInfraction)++;      
+    (ticket->occupiedInfraction)++;
 }
+void resize(ticketsADT ticket){
+    ticket->infractions= realloc(ticket->infractions, sizeof(tInfraction)*(ticket->dimInfraction));
+}
+
 //busca el numero de index del arreglo de infracciones segun el numero de identificacion de la infraccion.
 //devuelve el index de la infraccion con ese id, devuelve -1 en el caso de que no exista ese numero de identificacion.
 size_t findIndexById(const ticketsADT ticket, size_t id, size_t dim){
@@ -164,7 +161,7 @@ static tMulta * newMulta(const char* plate){
     tMulta* new = malloc(sizeof(tMulta));
     if(new == NULL){
         perror(ERRORMEMORIA);
-        exit(EXIT_FAILURE);            
+        exit(EXIT_FAILURE);
     }
     strcpy(new->plate,plate);
     new->der=NULL;
@@ -206,9 +203,9 @@ static void addMultaRec(tMulta* first, const char* patente, size_t *dim){
 void addMulta(ticketsADT ticket, size_t id, const char* patente, const char* agencyName){
     int index;
     if(ticket->infractions[ticket->occupiedInfraction].idNumber>id){
-        ordenar(ticket);
+        //ordenar(ticket);
     }
-    
+
     if((index=findIndexById(ticket, id, ticket->occupiedInfraction+1))==-1){
         return;
     }
@@ -238,7 +235,7 @@ void cpyInf(ticketsADT  ticket, ticketsADT new,  size_t dim){
         perror(DATOINVALIDO);
         exit(EXIT_FAILURE);
     }
-    new->infractions=realloc(new->infractions, sizeof(tInfraction)*dim); 
+    new->infractions=realloc(new->infractions, sizeof(tInfraction)*dim);
     for(int i=0; i<dim; i++){
         newInf(ticket,new, i,i);
     }
@@ -255,23 +252,23 @@ size_t findMax(ticketsADT ticket, size_t dim, size_t *newIndex){
 
      if(ticket->infractions[i].multasTotales==max){
         if(strcmp(ticket->infractions[i].nameInfr, ticket->infractions[k].nameInfr)<=0){
- 
+
                 change=1;
-                   
+
             }
-        } 
+        }
     if(change==1||ticket->infractions[i].multasTotales>max){
           max=ticket->infractions[i].multasTotales;
           k=i;
-  
+
           index=ticket->infractions[i].idNumber;
-      
+
         }
-        
+
         change=0;
 
     }
-         
+
    (*newIndex)=k;
     return index;
 
@@ -283,10 +280,9 @@ size_t getOccupied(const ticketsADT ticket){
 size_t getId(const ticketsADT ticket, size_t index){
     return ticket->infractions[index].idNumber;
 }
-//no encontre cuando usas esta funcion
-// tInfraction * getInfraction(const ticketsADT ticket){
-//     return ticket->infractions;
-// }
+size_t cantInfraction(const ticketsADT ticket){
+    return ticket->dimInfraction;
+}
 
 size_t getTotalFines(ticketsADT ticket, size_t index){
     return ticket->infractions[index].multasTotales;
@@ -298,15 +294,15 @@ char* getInfractionName(ticketsADT ticket, size_t index){
 
 //Q2
 size_t mostpopular(ticketsADT ticket, size_t * index){
-    if (ticket->firstAgency == NULL) {
+    if (ticket->iterAgency == NULL) {
         fprintf(stderr, ERRORFIN);
-        exit(EXIT_FAILURE);        
+        exit(EXIT_FAILURE);
     }
     size_t aux = 0;
     size_t auxindex = 0;
     for (size_t i = 0; i < ticket->dimInfraction; i++){
         int c;
-        if ((c = ticket->firstAgency->infractionsPopularity[i]) > aux) {
+        if ((c = ticket->iterAgency->infractionsPopularity[i]) > aux) {
             aux = c;
             auxindex = i;
         }
@@ -316,22 +312,23 @@ size_t mostpopular(ticketsADT ticket, size_t * index){
 }
 
 void beginAgency(ticketsADT ticket){
-    ticket->firstAgency = ticket->firstAgency;
+    ticket->iterAgency = ticket->firstAgency;
 }
 char * getNameAgency(ticketsADT ticket){
-    return ticket->firstAgency->nameAgency;
+    return ticket->iterAgency->nameAgency;
 }
 
 
 int hasNextAgency(ticketsADT ticket){
-    return (ticket->firstAgency != NULL);
+    return (ticket->iterAgency != NULL);
 }
+
 void nextAgency(ticketsADT ticket){
     if ( !hasNextAgency(ticket)) {
         fprintf(stderr, ERRORFIN);
         exit(EXIT_FAILURE);
-    } 
-    ticket->firstAgency=ticket->firstAgency->next;
+    }
+    ticket->iterAgency=ticket->iterAgency->next;
     return;
 }
 
@@ -348,7 +345,6 @@ static void plateWithMostFinesRec(tMulta *first, size_t * fines, char plate[PLAT
 
 }
 
-//No funciona probablemente me estoy haciendo lio con *fines
 void plateWithMostFines(ticketsADT ticket,size_t id,size_t * fines, char plate[PLATE]){
     if(ticket->infractions[id].firstMulta==NULL){
         return;
@@ -362,7 +358,7 @@ void plateWithMostFines(ticketsADT ticket,size_t id,size_t * fines, char plate[P
 
 //         if(first !=NULL){
 //         recorrerMultas(first->izq);
-//          printf("%s /%ld\n", first->plate, first->cantidad); 
+//          printf("%s /%ld\n", first->plate, first->cantidad);
 //         recorrerMultas(first->der);
 
 //     }
@@ -398,5 +394,4 @@ void freeTicket(ticketsADT ticket){
     free(ticket->infractions);
     freeAgency(ticket->firstAgency);
     free(ticket);
-
 }

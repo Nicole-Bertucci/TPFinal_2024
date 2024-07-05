@@ -25,7 +25,7 @@
 
 #endif
 
-#define SEPARATOR ";"    
+#define SEPARATOR ";\n"    
 #define NEWLINE "\n"
 
 typedef struct ticketsCDT* ticketsADT;
@@ -78,6 +78,8 @@ size_t getTotalFines(ticketsADT ticket, size_t index);
 
 char* getInfractionName(ticketsADT ticket, size_t index);
 
+size_t cantInfraction(const ticketsADT ticket);
+
 void beginAgency(ticketsADT ticket);
 
 int hasNextAgency(ticketsADT ticket);
@@ -90,9 +92,14 @@ size_t mostpopular(ticketsADT ticket, size_t * index);
 
 void plateWithMostFines(ticketsADT ticket,size_t id,size_t * fines, char plate[PLATE]);
 
-void ordenar(ticketsADT ticket);
+void sortByID(ticketsADT ticket);
 
 void sortByAlph(ticketsADT ticket);
+
+void sortByTotal(ticketsADT ticket);
+
+void resize(ticketsADT ticket);
+
 //libera los recursos utilizados por ticketsADT
 void freeTicket(ticketsADT ticket);
 

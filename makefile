@@ -8,17 +8,23 @@ FORMATCHI = -DFORMATCHI\=1
 
 all: programNYC programCHI clean
 
-programNYC: $(MAIN) csvreadNYC.o front.o ticketsADT.o queries.o
-	$(COMPILER) $(CFLAGS) csvreadNYC.o front.o queries.o ticketsADT.o $(MAIN) -o parkingTicketsNYC 
+programNYC: $(MAIN) csvreadNYC.o front.o ticketsADTNYC.o queriesNYC.o
+	$(COMPILER) $(CFLAGS) csvreadNYC.o front.o queriesNYC.o ticketsADTNYC.o $(MAIN) -o parkingTicketsNYC 
 
-programCHI: $(MAIN) csvreadCHI.o front.o ticketsADT.o queries.o
-	$(COMPILER) $(CFLAGS) csvreadCHI.o front.o queries.o ticketsADT.o $(MAIN) -o parkingTicketsCHI 
+programCHI: $(MAIN) csvreadCHI.o front.o ticketsADTCHI.o queriesCHI.o
+	$(COMPILER) $(CFLAGS) csvreadCHI.o front.o queriesCHI.o ticketsADTCHI.o $(MAIN) -o parkingTicketsCHI 
 
-ticketsADT.o: ticketsADT.c
-	$(COMPILER) $(CFLAGS) -c ticketsADT.c
+ticketsADTNYC.o: ticketsADT.c
+	$(COMPILER) $(FORMATNYC) $(CFLAGS) -c ticketsADT.c -o ticketsADTNYC.o
 
-queries.o: queries.c
-	$(COMPILER) $(CFLAGS) -c queries.c
+ticketsADTCHI.o: ticketsADT.c
+	$(COMPILER) $(FORMATCHI) $(CFLAGS) -c ticketsADT.c -o ticketsADTCHI.o
+
+queriesNYC.o: queries.c
+	$(COMPILER) $(FORMATNYC) $(CFLAGS) -c queries.c -o queriesNYC.o
+
+queriesCHI.o: queries.c
+	$(COMPILER) $(FORMATCHI) $(CFLAGS) -c queries.c -o queriesCHI.o
 
 csvreadNYC.o: csvread.c 
 	$(COMPILER) $(FORMATNYC) $(CFLAGS) -c csvread.c -o csvreadNYC.o
