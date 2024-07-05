@@ -48,14 +48,13 @@ static size_t getSize(size_t n){
 //     fclose(Q1CSV);    
 // }
 
-
 void query1(ticketsADT ticket){
     FILE * Q1CSV=newFile("query1.csv");
     writeHeaderQ1(Q1CSV);
+    sortByTotal(ticket);
     size_t totaltickets;
     char * infractionName;
     char * stringTotalTickets;
-    sortByTotal(ticket);
     size_t cant = getOccupied(ticket);
     for(size_t i=0; i<cant; i++){
         infractionName = getInfractionName(ticket, i);        
@@ -97,7 +96,6 @@ void query2(ticketsADT ticket){
     }
     fclose(Q2CSV);    
 }
-
 
 void query3(ticketsADT ticket){
     FILE * Q3CSV =newFile("query3.csv");
