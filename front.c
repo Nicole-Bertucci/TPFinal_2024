@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
-
 #include "ticketsADT.h"
+
 #define WRITE "wt"
 #define OPENCSV "Error en la apertura del archivo\n"
 #define MAXQ1 2

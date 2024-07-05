@@ -6,7 +6,7 @@
 
 #ifndef FORMATNYC
 // cambiar a 0 cuando hagamos el makefile, lo dejo en 1 para que no haga warnings mientras codeamos
-#define FORMATNYC 1 
+#define FORMATNYC 0 
 #endif
 
 #ifndef FORMATCHI
@@ -39,6 +39,7 @@ ticketsADT newTicket();
 //@param id numero de identificacion de la infraccion
 //@param name descripcion de la infraccion
 void addInfraction(ticketsADT ticket, size_t id, const char* name);
+void resize(ticketsADT ticket);
 
 // Si la patente no existe en el arreglo agrega al final del arreglo la multa 
 //segun la infraccion dada en idInfraccion, en el caso contrario solo
@@ -72,8 +73,6 @@ void cpyInf(const ticketsADT ticket, ticketsADT new, size_t dim);
 
 size_t findMax(ticketsADT ticket, size_t dim, size_t *newIndex);
 
-size_t findIndexById(const ticketsADT ticket, size_t id, size_t dim);
-
 size_t getTotalFines(ticketsADT ticket, size_t index);
 
 char* getInfractionName(ticketsADT ticket, size_t index);
@@ -98,7 +97,6 @@ void sortByAlph(ticketsADT ticket);
 
 void sortByTotal(ticketsADT ticket);
 
-void resize(ticketsADT ticket);
 
 //libera los recursos utilizados por ticketsADT
 void freeTicket(ticketsADT ticket);

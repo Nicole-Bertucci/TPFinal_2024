@@ -83,23 +83,23 @@ void sortByTotal(ticketsADT ticket){
 }
 
 void addInfraction(ticketsADT ticket, size_t id, const char* name){
-    // if(ticket->occupiedInfraction%BLOQUE==0){
-    //     ticket->infractions= realloc(ticket->infractions, sizeof(tInfraction)*(ticket->dimInfraction+BLOQUE));
-    //     if(ticket->infractions == NULL){
-    //         perror(ERRORMEMORIA);
-    //         exit(EXIT_FAILURE);
-    //     }
-    //     ticket->occupiedInfraction=(ticket->dimInfraction==0)?-1:(ticket->occupiedInfraction);
-    //     ticket->dimInfraction+=BLOQUE;
-    // }
-    if (ticket->occupiedInfraction + 1 == ticket->dimInfraction) {
-        ticket->infractions= realloc(ticket->infractions, sizeof(tInfraction) * (ticket->dimInfraction + BLOQUE));
+    if(ticket->occupiedInfraction%BLOQUE==0){
+        ticket->infractions= realloc(ticket->infractions, sizeof(tInfraction)*(ticket->dimInfraction+BLOQUE));
         if(ticket->infractions == NULL){
             perror(ERRORMEMORIA);
             exit(EXIT_FAILURE);
         }
-        ticket->dimInfraction += BLOQUE;
+        ticket->occupiedInfraction=(ticket->dimInfraction==0)?-1:(ticket->occupiedInfraction);
+        ticket->dimInfraction+=BLOQUE;
     }
+    // if (ticket->occupiedInfraction + 1 == ticket->dimInfraction) {
+    //     ticket->infractions= realloc(ticket->infractions, sizeof(tInfraction) * (ticket->dimInfraction + BLOQUE));
+    //     if(ticket->infractions == NULL){
+    //         perror(ERRORMEMORIA);
+    //         exit(EXIT_FAILURE);
+    //     }
+    //     ticket->dimInfraction += BLOQUE;
+    // }
     ticket->occupiedInfraction++;
     int i = ticket->occupiedInfraction;
     strcpy(ticket->infractions[i].nameInfr,name);
@@ -109,12 +109,12 @@ void addInfraction(ticketsADT ticket, size_t id, const char* name){
     ticket->infractions[i].idNumber=id;
 }
 void resize(ticketsADT ticket) {
-    ticket->infractions = realloc(ticket->infractions, sizeof(tInfraction) * ticket->occupiedInfraction);
+    ticket->infractions = realloc(ticket->infractions, sizeof(tInfraction) * ticket->dimInfraction);
     if (ticket->infractions == NULL) {
         perror(ERRORMEMORIA);
         exit(EXIT_FAILURE);
     }
-    ticket->dimInfraction = ticket->occupiedInfraction;
+    //ticket->dimInfraction = ticket->occupiedInfraction;
 }
 
 static tMulta * newMulta(const char* plate){
@@ -158,15 +158,28 @@ static void addMultaRec(tMulta* first, const char* patente, size_t *dim){
         }
     }
 }
-
+//busca el numero de index del arreglo de infracciones segun el numero de identificacion de la infraccion.
+//devuelve el index de la infraccion con ese id, devuelve -1 en el caso de que no exista ese numero de identificacion.
+static size_t findIndexById(const ticketsADT ticket, size_t id, size_t dim){
+    for(size_t min=0, max=dim-1;min<=max;){
+        size_t i=(max+min)/2;
+        size_t idnum= ticket->infractions[i].idNumber;
+        if(idnum==id){
+            return i;
+        }
+        else if(idnum<id){
+            min=i+1;
+        }
+        else { //(ticket->infractions[i].idNumber>id)
+            max=i-1;
+        }
+    }
+    return NOTFOUND;
+}
 
 void addMulta(ticketsADT ticket, size_t id, const char* patente, const char* agencyName){
-    int index;
-    // if(ticket->infractions[ticket->occupiedInfraction].idNumber>id){
-    //     ordenar(ticket);
-    // }
-
-    if((index=findIndexById(ticket, id, ticket->occupiedInfraction+1))==-1){
+    int index = findIndexById(ticket, id, ticket->occupiedInfraction+1);
+    if(index == -1){
         return;
     }
 
@@ -212,38 +225,16 @@ void addAgency(ticketsADT ticket, const char * name, size_t index){
 }
 
 
-//busca el numero de index del arreglo de infracciones segun el numero de identificacion de la infraccion.
-//devuelve el index de la infraccion con ese id, devuelve -1 en el caso de que no exista ese numero de identificacion.
-size_t findIndexById(const ticketsADT ticket, size_t id, size_t dim){
-    // if(id<0){ id no puede ser negativo es size_t
-    //     perror(DATOINVALIDO);
-    //     exit(EXIT_FAILURE);
-    // }
 
-    for(size_t min=0, max=dim-1;min<=max;){
-        size_t i=(max+min)/2;
-        if(ticket->infractions[i].idNumber==id){
-            return i;
-        }
-        else if(ticket->infractions[i].idNumber<id){
-            min=i+1;
-        }
-        else { //(ticket->infractions[i].idNumber>id)
-            max=i-1;
-        }
-    }
-    return NOTFOUND;
-}
-
-
+//no se usa
 void newInf(ticketsADT from,ticketsADT to, size_t index1, size_t index2){
         to->infractions[index2].dimMultas=from->infractions[index1].dimMultas;
         to->infractions[index2].idNumber=from->infractions[index1].idNumber;
         to->infractions[index2].multasTotales=from->infractions[index1].multasTotales;
         strcpy(to->infractions[index2].nameInfr,from->infractions[index1].nameInfr);
         to->infractions[index2].firstMulta=from->infractions[index1].firstMulta;
-    }
-
+}
+//no se usa
 //deja en new la copia del vector ticket
 void cpyInf(ticketsADT  ticket, ticketsADT new,  size_t dim){
     if(dim<=0){
@@ -255,7 +246,7 @@ void cpyInf(ticketsADT  ticket, ticketsADT new,  size_t dim){
         newInf(ticket,new, i,i);
     }
 }
-
+//no se usa
 // @return el index de la infraccion con la mayor cantidad de multas segun el dim
 size_t findMax(ticketsADT ticket, size_t dim, size_t *newIndex){
     if(dim<0){
@@ -292,6 +283,7 @@ size_t findMax(ticketsADT ticket, size_t dim, size_t *newIndex){
 size_t getId(const ticketsADT ticket, size_t index){
     return ticket->infractions[index].idNumber;
 }
+//no se usa
 size_t cantInfraction(const ticketsADT ticket){
     return ticket->dimInfraction;
 }
@@ -319,7 +311,7 @@ size_t mostpopular(ticketsADT ticket, size_t * index){
     for (size_t i = 0; i < ticket->dimInfraction; i++){
         int c = ticket->iterAgency->infractionsPopularity[i];
 
-        if (c == aux && (ticket->infractions[auxindex].nameInfr,ticket->infractions[i].nameInfr) > 0) {
+        if (c == aux && (strcmp(ticket->infractions[auxindex].nameInfr,ticket->infractions[i].nameInfr)) > 0) {
             auxindex = i;
         }
         else if (c > aux) {
@@ -398,12 +390,20 @@ static void freeMulta( tMulta*firstMulta){
 }
 
 static void freeAgency( tAgency*firstAgency){
-    if(firstAgency==NULL){
-        return;
+    // if(firstAgency==NULL){
+    //     return;
+    // }
+    // freeAgency(firstAgency->next);
+    // free(firstAgency->infractionsPopularity);
+    // free(firstAgency);
+    // es mas rapido iterativo
+    while (firstAgency != NULL) {
+    tAgency *actual = firstAgency;
+    firstAgency = firstAgency->next;
+    
+    free(actual->infractionsPopularity);
+    free(actual);
     }
-    freeAgency(firstAgency->next);
-    free(firstAgency->infractionsPopularity);
-    free(firstAgency);
 }
 
 void freeTicket(ticketsADT ticket){
