@@ -24,10 +24,10 @@ static size_t getSize(size_t n){
 
 void query1(ticketsADT ticket){
     FILE * Q1CSV=newFile("query1.csv");
+    writeHeaderQ1(Q1CSV);
     size_t index, id, indexNew=0;
     ticketsADT new=newTicket();
     size_t dim=getOccupied(ticket)+1;
-    writeHeaderQ1(Q1CSV);
     cpyInf(ticket,new, dim);
     
     for(size_t i=0, dimNew=dim; i<dimNew; dimNew=dimNew-1){
@@ -50,7 +50,7 @@ void query1(ticketsADT ticket){
 void query2(ticketsADT ticket){
     FILE *  Q2CSV = newFile("query2.csv");
     writeHeaderQ2(Q2CSV); 
-    //beginAgency(ticket) hay q hacer un iterador y modificar las otras funciones creo no estoy seguro, ayuda loco
+    beginAgency(ticket);
     char * issuingAgency; 
     size_t index; 
     size_t totaltickets;
@@ -82,7 +82,9 @@ void query3(ticketsADT ticket){
     char plateAsStr[PLATE];    
 
     for(int id=0; id<getOccupied(ticket)+1; id++){
+        fines=0;
         plateWithMostFines(ticket,id,&fines,plateAsStr);
+        printf(" %d,%zu  ",id,fines);
         if (fines != 0) {
             char *finesAsStr=calloc(1, getSize(fines)+1);
             if (finesAsStr == NULL) {

@@ -16,7 +16,8 @@ void csvReadInfractions(const char * argv[], ticketsADT ticket){
     }
     char s[LINE];
     fgets(s,LINE,infractionFile);
-    while (fgets(s,LINE,infractionFile), infractionFile){
+    while (fgets(s,LINE,infractionFile)){
+        
         size_t id;
         char * name;
         char * token = strtok(s,SEPARATOR);
@@ -29,6 +30,7 @@ void csvReadInfractions(const char * argv[], ticketsADT ticket){
                 
                 case description:
                     name = token;
+                    name[strcspn(name, "\n")] = '\0';
                     break;
 
                 default:
@@ -41,8 +43,11 @@ void csvReadInfractions(const char * argv[], ticketsADT ticket){
         }       
     }
     fclose(infractionFile);
-    //falta la funciones para ordenar el vector de infracciones
+    printf("infraction finalizo\n");
+
     ordenar(ticket);
+    printf("orden finalizo\n");
+
     csvReadTickets(argv,ticket);
 }
 
@@ -54,7 +59,7 @@ void csvReadTickets(const char * argv[], ticketsADT ticket) {
     }    
     char s[LINE];
     fgets(s,LINE,ticketsFile);
-    while (fgets(s,LINE,ticketsFile), ticketsFile){
+    while (fgets(s,LINE,ticketsFile)){
         size_t id;
         char * plate;
         char * agency;
@@ -83,4 +88,6 @@ void csvReadTickets(const char * argv[], ticketsADT ticket) {
         }       
     }
     fclose(ticketsFile);
+    printf("tickets finalizo\n");
+
 }

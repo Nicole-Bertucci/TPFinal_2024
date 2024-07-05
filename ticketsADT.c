@@ -28,6 +28,7 @@ typedef struct tAgency{
     struct tAgency * next;
     char nameAgency[ISSUINGAGENCY];
     size_t* infractionsPopularity;
+
 }tAgency;
 
 typedef struct ticketsCDT{
@@ -89,7 +90,7 @@ void sortByAlph(ticketsADT ticket){
     qsort(ticket->infractions, ticket->occupiedInfraction+1, sizeof(tInfraction), &alf);
 }
 
-static tAgency * addAgencyRec(tAgency * agency, char * name, size_t index, size_t dimInfraction){
+static tAgency * addAgencyRec(tAgency * agency, const char * name, size_t index, size_t dimInfraction){
     int c;
     if (agency == NULL || (c = strcmp(agency->nameAgency, name)) > 0) {
         tAgency * new = malloc(sizeof(*new));
@@ -115,7 +116,7 @@ static tAgency * addAgencyRec(tAgency * agency, char * name, size_t index, size_
     return agency;
 }
 
-void addAgency(ticketsADT ticket, char * name, size_t index){
+void addAgency(ticketsADT ticket, const char * name, size_t index){
     ticket->firstAgency = addAgencyRec(ticket->firstAgency, name, index, ticket->dimInfraction);
 }
 
@@ -220,7 +221,7 @@ void addMulta(ticketsADT ticket, size_t id, const char* patente, const char* age
         addMultaRec(ticket->infractions[index].firstMulta, patente, &(ticket->infractions[index].dimMultas));
     }
     ticket->infractions[index].multasTotales++;
-    // addAgency(ticket, agencyName, index);
+    addAgency(ticket, agencyName, index);
 }
 
 void newInf(ticketsADT from,ticketsADT to, size_t index1, size_t index2){
@@ -314,9 +315,13 @@ size_t mostpopular(ticketsADT ticket, size_t * index){
     return aux;
 }
 
+void beginAgency(ticketsADT ticket){
+    ticket->firstAgency = ticket->firstAgency;
+}
 char * getNameAgency(ticketsADT ticket){
     return ticket->firstAgency->nameAgency;
 }
+
 
 int hasNextAgency(ticketsADT ticket){
     return (ticket->firstAgency != NULL);
@@ -381,19 +386,16 @@ static void freeAgency( tAgency*firstAgency){
     if(firstAgency==NULL){
         return;
     }
-    else{
-        freeAgency(firstAgency->next);
-        free(firstAgency->infractionsPopularity);
-        free(firstAgency);
-
-    }
+    freeAgency(firstAgency->next);
+    free(firstAgency->infractionsPopularity);
+    free(firstAgency);
 }
 
 void freeTicket(ticketsADT ticket){
     for(int i=0; i<ticket->dimInfraction; i++){
         freeMulta(ticket->infractions[i].firstMulta);
-        free(ticket->infractions);
     }
+    free(ticket->infractions);
     freeAgency(ticket->firstAgency);
     free(ticket);
 

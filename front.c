@@ -69,8 +69,7 @@ void writeHeaderQ3(FILE * Q3CSV){
 
 void writeRowQ3(char *infraction, char* plate, char* fine, FILE * Q3CSV){
     char * row[]={infraction, plate, fine };
-     for (int i=0; i<MAXQ3; i++)
-    {
+    for (int i=0; i<MAXQ3; i++){
         fputs(row[i],Q3CSV);
         switch (i)
         {

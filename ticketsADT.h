@@ -2,7 +2,7 @@
 #define __ticketsADT_h_
 #include <stdio.h>
 
-#define PLATE 10
+#define PLATE 10+1
 
 #ifndef FORMATNYC
 // cambiar a 0 cuando hagamos el makefile, lo dejo en 1 para que no haga warnings mientras codeamos
@@ -15,13 +15,13 @@
 
 //NYC
 #if FORMATNYC
-#define DESCRIPTION 50
-#define ISSUINGAGENCY 13
+#define DESCRIPTION 30+1
+#define ISSUINGAGENCY 35+1
 
 //CHI
 #elif FORMATCHI
-#define DESCRIPTION 30
-#define ISSUINGAGENCY 35
+#define DESCRIPTION 50+1
+#define ISSUINGAGENCY 13+1
 
 #endif
 
@@ -54,7 +54,7 @@ void addMulta(ticketsADT ticket, size_t id, const char* patente, const char* age
 //Agrega por orden alfabetico una nueva agencia, si ya existe aborta
 //@param ticket ciudad en donde existe la agencia
 //@param name nombre de la agencia
-void addAgency (ticketsADT ticket,char* name, size_t index);
+void addAgency (ticketsADT ticket,const char* name, size_t index);
 
 char * stringCopy(const char* name, size_t lenght);
 
@@ -77,6 +77,8 @@ size_t findIndexById(const ticketsADT ticket, size_t id, size_t dim);
 size_t getTotalFines(ticketsADT ticket, size_t index);
 
 char* getInfractionName(ticketsADT ticket, size_t index);
+
+void beginAgency(ticketsADT ticket);
 
 int hasNextAgency(ticketsADT ticket);
 
