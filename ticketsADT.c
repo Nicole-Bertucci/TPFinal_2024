@@ -10,7 +10,7 @@
 #define DATOINVALIDO "Dato ingresado es invalido"
 #define NOPLATES "No plate"
 #define BLOQUE 10
-#define NOTFOUND ((size_t) -1)
+#define NOTFOUND -1
 #define ERRORFIN "Error en el recorrido de las Agencias"
 typedef struct tMulta{
     struct tMulta *izq;
@@ -108,7 +108,7 @@ void addInfraction(ticketsADT ticket, size_t id, const char* name){
     ticket->infractions[i].firstMulta=NULL;
     ticket->infractions[i].idNumber=id;
 }
-void resize(ticketsADT ticket) {
+void resize(ticketsADT ticket) { //maybe es static
     ticket->infractions = realloc(ticket->infractions, sizeof(tInfraction) * ticket->dimInfraction);
     if (ticket->infractions == NULL) {
         perror(ERRORMEMORIA);
@@ -116,7 +116,21 @@ void resize(ticketsADT ticket) {
     }
     //ticket->dimInfraction = ticket->occupiedInfraction;
 }
-//44
+
+//Q1, Q2 y Q3
+size_t getOccupied(const ticketsADT ticket){
+    return ticket->occupiedInfraction;
+}
+//Q1, Q2 y Q3
+char* getInfractionName(ticketsADT ticket, size_t index){
+    return ticket->infractions[index].nameInfr;
+}
+//Q1
+size_t getTotalFines(ticketsADT ticket, size_t index){
+    return ticket->infractions[index].multasTotales;
+}
+
+
 static tMulta * newMulta(const char* plate){
     tMulta* new = malloc(sizeof(tMulta));
     if(new == NULL){
@@ -132,7 +146,7 @@ static tMulta * newMulta(const char* plate){
 
 //si encuentra la patente agrega uno a su cantidad, caso contrario agrega la patente
 //en el lugar correspondiente siguiendo el orden alfabetico;
-static void addMultaRec(tMulta* first, const char* patente, size_t *dim){
+static void addFineRec(tMulta* first, const char* patente, size_t *dim){
     int dif= strcmp(patente,first->plate);
     if(dif==0) {
         first->cantidad++;
@@ -144,7 +158,7 @@ static void addMultaRec(tMulta* first, const char* patente, size_t *dim){
             *dim+=1;
         }
         else{
-            addMultaRec(first->izq, patente, dim);
+            addFineRec(first->izq, patente, dim);
         }
     }
     else { // dif>0
@@ -154,15 +168,15 @@ static void addMultaRec(tMulta* first, const char* patente, size_t *dim){
             *dim+=1;
         }
         else{
-            addMultaRec(first->der, patente,dim );
+            addFineRec(first->der, patente,dim );
         }
     }
 }
 //busca el numero de index del arreglo de infracciones segun el numero de identificacion de la infraccion.
 //devuelve el index de la infraccion con ese id, devuelve -1 en el caso de que no exista ese numero de identificacion.
-static size_t findIndexById(const ticketsADT ticket, size_t id, size_t dim){
-    for(size_t min=0, max=dim-1;min<=max;){
-        size_t i=(max+min)/2;
+static long int findIndexById(const ticketsADT ticket, size_t id, size_t dim){
+    for(long int min=0, max=dim-1;min<=max;){
+        long int i=(max+min)/2;
         size_t idnum= ticket->infractions[i].idNumber;
         if(idnum==id){
             return i;
@@ -170,16 +184,16 @@ static size_t findIndexById(const ticketsADT ticket, size_t id, size_t dim){
         else if(idnum<id){
             min=i+1;
         }
-        else { //(ticket->infractions[i].idNumber>id)
+        else {
             max=i-1;
         }
     }
     return NOTFOUND;
 }
 
-void addMulta(ticketsADT ticket, size_t id, const char* patente, const char* agencyName){
+void addFine(ticketsADT ticket, size_t id, const char* patente, const char* agencyName){
     int index = findIndexById(ticket, id, ticket->occupiedInfraction+1);
-    if(index == -1){
+    if(index == NOTFOUND){
         return;
     }
 
@@ -188,12 +202,12 @@ void addMulta(ticketsADT ticket, size_t id, const char* patente, const char* age
         ticket->infractions[index].dimMultas = 1;
     }
     else{
-        addMultaRec(ticket->infractions[index].firstMulta, patente, &(ticket->infractions[index].dimMultas));
+        addFineRec(ticket->infractions[index].firstMulta, patente, &(ticket->infractions[index].dimMultas));
     }
     ticket->infractions[index].multasTotales++;
     addAgency(ticket, agencyName, index);
 }
-
+//
 static tAgency * addAgencyRec(tAgency * agency, const char * name, size_t index, size_t dimInfraction){
     int c;
     if (agency == NULL || (c = strcmp(agency->nameAgency, name)) > 0) {
@@ -224,81 +238,24 @@ void addAgency(ticketsADT ticket, const char * name, size_t index){
     ticket->firstAgency = addAgencyRec(ticket->firstAgency, name, index, ticket->dimInfraction);
 }
 
-
-
-//no se usa
-void newInf(ticketsADT from,ticketsADT to, size_t index1, size_t index2){
-        to->infractions[index2].dimMultas=from->infractions[index1].dimMultas;
-        to->infractions[index2].idNumber=from->infractions[index1].idNumber;
-        to->infractions[index2].multasTotales=from->infractions[index1].multasTotales;
-        strcpy(to->infractions[index2].nameInfr,from->infractions[index1].nameInfr);
-        to->infractions[index2].firstMulta=from->infractions[index1].firstMulta;
+void beginAgency(ticketsADT ticket){
+    ticket->iterAgency = ticket->firstAgency;
 }
-//no se usa
-//deja en new la copia del vector ticket
-void cpyInf(ticketsADT  ticket, ticketsADT new,  size_t dim){
-    if(dim<=0){
-        perror(DATOINVALIDO);
+int hasNextAgency(ticketsADT ticket){
+    return (ticket->iterAgency != NULL);
+}
+char * getNameAgency(ticketsADT ticket){
+    return ticket->iterAgency->nameAgency;
+}
+void nextAgency(ticketsADT ticket){
+    if ( !hasNextAgency(ticket)) {
+        fprintf(stderr, ERRORFIN);
         exit(EXIT_FAILURE);
     }
-    new->infractions=realloc(new->infractions, sizeof(tInfraction)*dim);
-    for(int i=0; i<dim; i++){
-        newInf(ticket,new, i,i);
-    }
+    ticket->iterAgency=ticket->iterAgency->next;
+    return;
 }
-//no se usa
-// @return el index de la infraccion con la mayor cantidad de multas segun el dim
-size_t findMax(ticketsADT ticket, size_t dim, size_t *newIndex){
-    if(dim<0){
-        perror(DATOINVALIDO);
-        exit(EXIT_FAILURE);
-    }
-    int max=0, index=0, change=0, k=0;
-    for(int i=0; i<dim; i++){
 
-     if(ticket->infractions[i].multasTotales==max){
-        if(strcmp(ticket->infractions[i].nameInfr, ticket->infractions[k].nameInfr)<=0){
-
-                change=1;
-
-            }
-        }
-    if(change==1||ticket->infractions[i].multasTotales>max){
-          max=ticket->infractions[i].multasTotales;
-          k=i;
-
-          index=ticket->infractions[i].idNumber;
-
-        }
-
-        change=0;
-
-    }
-
-   (*newIndex)=k;
-    return index;
-
-}
-//no se usan
-size_t getId(const ticketsADT ticket, size_t index){
-    return ticket->infractions[index].idNumber;
-}
-//no se usa
-size_t cantInfraction(const ticketsADT ticket){
-    return ticket->dimInfraction;
-}
-//Q1, Q2 y Q3
-size_t getOccupied(const ticketsADT ticket){
-    return ticket->occupiedInfraction;
-}
-//Q1, Q2 y Q3
-char* getInfractionName(ticketsADT ticket, size_t index){
-    return ticket->infractions[index].nameInfr;
-}
-//Q1
-size_t getTotalFines(ticketsADT ticket, size_t index){
-    return ticket->infractions[index].multasTotales;
-}
 
 //Q2
 size_t mostpopular(ticketsADT ticket, size_t * index){
@@ -323,23 +280,7 @@ size_t mostpopular(ticketsADT ticket, size_t * index){
     return aux;
 }
 
-void beginAgency(ticketsADT ticket){
-    ticket->iterAgency = ticket->firstAgency;
-}
-int hasNextAgency(ticketsADT ticket){
-    return (ticket->iterAgency != NULL);
-}
-char * getNameAgency(ticketsADT ticket){
-    return ticket->iterAgency->nameAgency;
-}
-void nextAgency(ticketsADT ticket){
-    if ( !hasNextAgency(ticket)) {
-        fprintf(stderr, ERRORFIN);
-        exit(EXIT_FAILURE);
-    }
-    ticket->iterAgency=ticket->iterAgency->next;
-    return;
-}
+
 //Q3
 static void plateWithMostFinesRec(tMulta *first, size_t * fines, char plate[PLATE]){
     if(first==NULL){
@@ -365,18 +306,6 @@ void plateWithMostFines(ticketsADT ticket,size_t id,size_t * fines, char plate[P
     plateWithMostFinesRec(ticket->infractions[id].firstMulta, fines, plate);
 }
 
-//********funcion de prueba, ver como adaptar para QUERY 3 **************/
-// //lee en orden alfabetico
-// static int recorrerMultas(tMulta * first){
-
-//         if(first !=NULL){
-//         recorrerMultas(first->izq);
-//          printf("%s /%ld\n", first->plate, first->cantidad);
-//         recorrerMultas(first->der);
-
-//     }
-//     return 1;
-//     }
 
 static void freeMulta( tMulta*firstMulta){
     if(firstMulta==NULL){
@@ -390,13 +319,6 @@ static void freeMulta( tMulta*firstMulta){
 }
 
 static void freeAgency( tAgency*firstAgency){
-    // if(firstAgency==NULL){
-    //     return;
-    // }
-    // freeAgency(firstAgency->next);
-    // free(firstAgency->infractionsPopularity);
-    // free(firstAgency);
-    // es mas rapido iterativo
     while (firstAgency != NULL) {
     tAgency *actual = firstAgency;
     firstAgency = firstAgency->next;

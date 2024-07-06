@@ -23,9 +23,9 @@ FILE * newFile(char * name){
 void writeHeaderQ1(FILE * Q1CSV){
  fputs("infraction;tickets\n",Q1CSV);
 }
-//borrar
-void writeRowQ1(char*totalFines, char*infractions, FILE * Q1CSV){
-  char * row[]={infractions, totalFines};
+
+void writeRowQ1(char*totalFines, char*infraction, FILE * Q1CSV){
+  char * row[]={infraction, totalFines};
      for (int i=0; i<MAXQ1; i++)
     {
         fputs(row[i],Q1CSV);
@@ -46,8 +46,8 @@ void writeHeaderQ2(FILE * Q2CSV){
    fputs("issuingAgency;infraction;tickets\n",Q2CSV);
 }  
 
-void writeRowQ2(char *issuingAgency,char * infractionName, char * totaltickets, FILE * Q2CSV){
-    char * line[] = {issuingAgency,infractionName,totaltickets}; 
+void writeRowQ2(char *issuingAgency,char * infractionName, char * totalFines, FILE * Q2CSV){
+    char * line[] = {issuingAgency,infractionName,totalFines}; 
     for (int i = 0; i < MAXQ2; i++) {
         fputs(line[i],Q2CSV);
         switch (i) {

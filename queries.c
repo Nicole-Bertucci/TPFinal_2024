@@ -23,50 +23,25 @@ static size_t getSize(size_t n){
     return size;
 }
 
-// void query1(ticketsADT ticket){
-//     FILE * Q1CSV=newFile("query1.csv");
-//     writeHeaderQ1(Q1CSV);
-//     size_t index, id, indexNew=0;
-//     ticketsADT new=newTicket();
-//     size_t dim=getOccupied(ticket)+1;
-//     cpyInf(ticket,new, dim);
-    
-//     for(size_t i=0, dimNew=dim; i<dimNew; dimNew=dimNew-1){
-//         id=findMax(new, dimNew, &indexNew);
-//         index=findIndexById(ticket, id,dim );
-        
-//         size_t total=getTotalFines(ticket, index);
-        
-//         char* finesAsStr=calloc(1, getSize(total)+1);
-//         char infrName[DESCRIPTION];
-//         strcpy(infrName,getInfractionName(ticket, index));
-//         sprintf(finesAsStr, "%zu", total);
-//         writeRowQ1(finesAsStr, infrName,Q1CSV);
-//         newInf(new,new,dimNew-1, indexNew);
-//         free(finesAsStr);
-//     }
-//     fclose(Q1CSV);    
-// }
-//borrar
 void query1(ticketsADT ticket){
     FILE * Q1CSV=newFile("query1.csv");
     writeHeaderQ1(Q1CSV);
     sortByTotal(ticket);
-    size_t totaltickets;
+    size_t totalFines;
     char * infractionName;
-    char * stringTotalTickets;
+    char * stringTotalFines;
     size_t cant = getOccupied(ticket);
     for(size_t i=0; i<cant; i++){
         infractionName = getInfractionName(ticket, i);        
-        totaltickets = getTotalFines(ticket, i);
-         stringTotalTickets = calloc(1, getSize(totaltickets)+1);
-        if (stringTotalTickets == NULL){
+        totalFines = getTotalFines(ticket, i);
+         stringTotalFines = calloc(1, getSize(totalFines)+1);
+        if (stringTotalFines == NULL){
             perror(ERRORMEMORIA);
             exit(EXIT_FAILURE);           
         }
-        sprintf(stringTotalTickets, "%zu", totaltickets);
-        writeRowQ1(stringTotalTickets, infractionName,Q1CSV);
-        free(stringTotalTickets);
+        sprintf(stringTotalFines, "%zu", totalFines);
+        writeRowQ1(stringTotalFines, infractionName,Q1CSV);
+        free(stringTotalFines);
     }
     fclose(Q1CSV);    
 }
@@ -77,21 +52,21 @@ void query2(ticketsADT ticket){
     beginAgency(ticket);
     char * issuingAgency; 
     size_t index; 
-    size_t totaltickets;
+    size_t totalFines;
     char * infractionName;
 
     for (size_t i = 0; hasNextAgency(ticket) ; i++) {
         issuingAgency = getNameAgency(ticket); 
-        totaltickets = mostpopular(ticket, &index);
+        totalFines = mostpopular(ticket, &index);
         infractionName = getInfractionName(ticket, index);
-        char * stringTotalTickets = calloc(1, getSize(totaltickets)+1);
-        if (stringTotalTickets == NULL){
+        char * stringTotalFines = calloc(1, getSize(totalFines)+1);
+        if (stringTotalFines == NULL){
             perror(ERRORMEMORIA);
             exit(EXIT_FAILURE);           
         }
-        sprintf(stringTotalTickets,"%zu",totaltickets);
-        writeRowQ2(issuingAgency,infractionName,stringTotalTickets, Q2CSV);
-        free(stringTotalTickets);
+        sprintf(stringTotalFines,"%zu",totalFines);
+        writeRowQ2(issuingAgency,infractionName,stringTotalFines, Q2CSV);
+        free(stringTotalFines);
         nextAgency(ticket);
     }
     fclose(Q2CSV);    
@@ -108,15 +83,15 @@ void query3(ticketsADT ticket){
         fines=0;
         plateWithMostFines(ticket,id,&fines,plateAsStr);
         if (fines != 0) {
-            char *finesAsStr=calloc(1, getSize(fines)+1);
-            if (finesAsStr == NULL) {
+            char *stringTotalFines=calloc(1, getSize(fines)+1);
+            if (stringTotalFines == NULL) {
                 perror(ERRORMEMORIA);
                 exit(EXIT_FAILURE);
             }
 
-            sprintf(finesAsStr, "%zu", fines);
-            writeRowQ3(getInfractionName(ticket, id),plateAsStr,finesAsStr,Q3CSV);
-            free(finesAsStr);
+            sprintf(stringTotalFines, "%zu", fines);
+            writeRowQ3(getInfractionName(ticket, id),plateAsStr,stringTotalFines,Q3CSV);
+            free(stringTotalFines);
         }
     }
     fclose(Q3CSV);

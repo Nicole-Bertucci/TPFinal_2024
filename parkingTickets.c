@@ -4,7 +4,7 @@
 #include "ticketsADT.h"
 #include "front.h"
 #include "queries.h"
-//borrar
+
 int main(int argc,const char *argv[]){
 
     clock_t inicio, fin;

@@ -81,7 +81,7 @@ void csvReadTickets(const char * argv[], ticketsADT ticket) {
                 }
             token = strtok(NULL,SEPARATOR);
             }
-            addMulta(ticket,id,plate,agency);
+            addFine(ticket,id,plate,agency);
         }       
     }
     fclose(ticketsFile);
