@@ -62,7 +62,7 @@ void addFine(ticketsADT ticket, size_t id, const char* patente, const char* agen
 //Agrega por orden alfabetico una nueva agencia, si ya existe aborta.
 //@param ticket ciudad en donde existe la agencia
 //@param name nombre de la agencia
-void addAgency (ticketsADT ticket,const char* name, size_t index);
+void addAgency (ticketsADT ticket,const char* name, long int index);
 
 void beginAgency(ticketsADT ticket);
 
@@ -74,7 +74,7 @@ char * getNameAgency(ticketsADT ticket);
 
 size_t mostpopular(ticketsADT ticket, size_t * index);
 
-void plateWithMostFines(ticketsADT ticket,size_t id,size_t * fines, char plate[PLATE]);
+size_t plateWithMostFines(ticketsADT ticket,size_t id, char plate[PLATE]);
 
 void sortByID(ticketsADT ticket);
 

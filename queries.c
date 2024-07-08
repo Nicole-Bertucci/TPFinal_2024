@@ -27,6 +27,7 @@ void query1(ticketsADT ticket){
     FILE * Q1CSV=newFile("query1.csv");
     writeHeaderQ1(Q1CSV);
     sortByTotal(ticket);
+    //sortByID(ticket);
     size_t totalFines;
     char * infractionName;
     char * stringTotalFines;
@@ -34,7 +35,7 @@ void query1(ticketsADT ticket){
     for(size_t i=0; i<cant; i++){
         infractionName = getInfractionName(ticket, i);        
         totalFines = getTotalFines(ticket, i);
-         stringTotalFines = calloc(1, getSize(totalFines)+1);
+        stringTotalFines = calloc(1, getSize(totalFines)+1);
         if (stringTotalFines == NULL){
             perror(ERRORMEMORIA);
             exit(EXIT_FAILURE);           
@@ -78,17 +79,14 @@ void query3(ticketsADT ticket){
     sortByAlph(ticket);
     size_t fines=0;
     char plateAsStr[PLATE];    
-
     for(int id=0; id<getOccupied(ticket)+1; id++){
-        fines=0;
-        plateWithMostFines(ticket,id,&fines,plateAsStr);
+        fines = plateWithMostFines(ticket,id,plateAsStr);
         if (fines != 0) {
             char *stringTotalFines=calloc(1, getSize(fines)+1);
             if (stringTotalFines == NULL) {
                 perror(ERRORMEMORIA);
                 exit(EXIT_FAILURE);
             }
-
             sprintf(stringTotalFines, "%zu", fines);
             writeRowQ3(getInfractionName(ticket, id),plateAsStr,stringTotalFines,Q3CSV);
             free(stringTotalFines);
