@@ -5,7 +5,6 @@
 
 #define ERRORMEMORIA "Error de asignacion de memoria\n"
 
-
 static size_t getSize(size_t n){
     int size=0;
     if(n==0){
@@ -73,10 +72,10 @@ void query3(ticketsADT ticket){
     FILE * Q3CSV =newFile("query3.csv");
     writeHeaderQ3(Q3CSV);
     sortByAlph(ticket);
-    size_t fines=0;
-    char plateAsStr[PLATE];    
+    size_t fines;
+    char * plate;
     for(int id=0; id<getOccupied(ticket)+1; id++){
-        fines = plateWithMostFines(ticket,id,plateAsStr);
+        plate = plateWithMostFines(ticket,id,&fines);
         if (fines != 0) {
             char *stringTotalFines=calloc(1, getSize(fines)+1);
             if (stringTotalFines == NULL) {
@@ -84,7 +83,7 @@ void query3(ticketsADT ticket){
                 exit(EXIT_FAILURE);
             }
             sprintf(stringTotalFines, "%zu", fines);
-            writeRowQ3(getInfractionName(ticket, id),plateAsStr,stringTotalFines,Q3CSV);
+            writeRowQ3(getInfractionName(ticket, id),plate,stringTotalFines,Q3CSV);
             free(stringTotalFines);
         }
     }

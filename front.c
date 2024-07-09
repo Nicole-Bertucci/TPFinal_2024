@@ -63,7 +63,6 @@ void writeRowQ2(char * issuingAgency,char * infractionName, char * totalFines, F
     }
 }
 
-
 void writeHeaderQ3(FILE * Q3CSV){
    fputs("infraction;plate;tickets\n",Q3CSV);
 }

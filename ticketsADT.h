@@ -116,16 +116,12 @@ char * getNameAgency(ticketsADT ticket);
 size_t mostpopular(ticketsADT ticket, size_t * index);
 
 /*
-* @return Devuelve la cantidad de multas totales de la patente con
-* la mayor cantidad de multas segun la infraccion con ID id.
-* Ademas deja el numero de la patente con mayor cantidad de multas
-* segun la infraccion en plate.
+* @return Devuelve el numero de patente con mayor cantidad de multas segun la infraccion.
 * @param ticket ciudad donde se redactan las multas.
 * @param id numero de identificacion de la infraccion.
-* @param plate vector de salida donde se coloca el numero de patente 
-* con mayor cantidad de multas segun la infraccion.
+* @param fines puntero donde se indica la cantidad de multas de esa patente.
 */
-size_t plateWithMostFines(ticketsADT ticket,size_t id, char plate[PLATE]);
+char * plateWithMostFines(ticketsADT ticket,size_t id, size_t *fines);
 
 /*
 * Ordena las infracciones de forma ascendente segun su numero de ID.
