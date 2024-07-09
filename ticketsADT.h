@@ -84,13 +84,6 @@ size_t getTotalFines(ticketsADT ticket, size_t index);
 void addFine(ticketsADT ticket, size_t id, const char* patente, const char* agencyName );
 
 /*
-* Agrega por orden de insercion una nueva agencia.
-* @param ticket ciudad en donde existe la agencia.
-* @param name nombre de la agencia.
-*/
-void addAgency (ticketsADT ticket,const char* name, long int index); //se puede hacer static?
-
-/*
 * Resetea el iterador que recorre la lista de Agency.
 * @param ticket ciudad en donde existe la agencia. 
 */

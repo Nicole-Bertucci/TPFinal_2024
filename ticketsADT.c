@@ -132,7 +132,7 @@ size_t getTotalFines(ticketsADT ticket, size_t index){
 /*
 *crea una nueva multa vacia.
 */
-static tMulta * newMulta(const char* plate){
+static tMulta * newFine(const char* plate){
     tMulta* new = malloc(sizeof(tMulta));
     if(new == NULL){
         perror(ERRORMEMORIA);
@@ -156,7 +156,7 @@ static void addFineRec(tMulta* first, const char* patente, size_t *dim){
     }
     else if(dif<0) {
         if(first->izq == NULL){
-            tMulta *new=newMulta(patente);
+            tMulta *new=newFine(patente);
             first->izq=new;
             (*dim)++;
         }
@@ -166,7 +166,7 @@ static void addFineRec(tMulta* first, const char* patente, size_t *dim){
     }
     else { // dif>0
         if(first->der == NULL){
-            tMulta *new=newMulta(patente);
+            tMulta *new=newFine(patente);
             first->der=new;
             (*dim)++;
         }
@@ -198,23 +198,6 @@ static long int findIndexById(const ticketsADT ticket, size_t id, size_t dim){
     return NOTFOUND;
 }
 
-void addFine(ticketsADT ticket, size_t id, const char* patente, const char* agencyName){
-    long int index = findIndexById(ticket, id, ticket->occupiedInfraction+1);
-    if(index == NOTFOUND){
-        return;
-    }
-
-    if(ticket->infractions[index].firstMulta == NULL){
-        ticket->infractions[index].firstMulta = newMulta(patente);
-        ticket->infractions[index].dimMultas = 1;
-    }
-    else{
-        addFineRec(ticket->infractions[index].firstMulta, patente, &(ticket->infractions[index].dimMultas));
-    }
-    ticket->infractions[index].multasTotales++;
-    addAgency(ticket, agencyName, index);
-}
-
 static tAgency * addAgencyRec(tAgency * agency, const char * name, long int index, size_t occupiedInfraction){
     int c;
     if (agency == NULL || (c = strcmp(agency->nameAgency, name)) > 0) {
@@ -240,11 +223,32 @@ static tAgency * addAgencyRec(tAgency * agency, const char * name, long int inde
     agency->next = addAgencyRec(agency->next, name, index, occupiedInfraction);
     return agency;
 }
-
-// ********************se usa afuera de addFine o podemos volverlo static?
-void addAgency(ticketsADT ticket, const char * name, long int index){
+/*
+* Agrega en la lista por orden alfabetico una nueva agencia.
+* @param ticket ciudad en donde existe la agencia.
+* @param name nombre de la agencia.
+*/
+static void addAgency(ticketsADT ticket, const char * name, long int index){
     ticket->firstAgency = addAgencyRec(ticket->firstAgency, name, index, ticket->occupiedInfraction);
 }
+
+void addFine(ticketsADT ticket, size_t id, const char* patente, const char* agencyName){
+    long int index = findIndexById(ticket, id, ticket->occupiedInfraction+1);
+    if(index == NOTFOUND){
+        return;
+    }
+
+    if(ticket->infractions[index].firstMulta == NULL){
+        ticket->infractions[index].firstMulta = newFine(patente);
+        ticket->infractions[index].dimMultas = 1;
+    }
+    else{
+        addFineRec(ticket->infractions[index].firstMulta, patente, &(ticket->infractions[index].dimMultas));
+    }
+    ticket->infractions[index].multasTotales++;
+    addAgency(ticket, agencyName, index);
+}
+
 
 void beginAgency(ticketsADT ticket){
     ticket->iterAgency = ticket->firstAgency;
