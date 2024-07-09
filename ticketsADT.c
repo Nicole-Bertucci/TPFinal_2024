@@ -98,6 +98,8 @@ void addInfraction(ticketsADT ticket, size_t id, const char* name){
     ticket->infractions[i].idNumber=id;
     ticket->occupiedInfraction++;
 }
+
+
 void resize(ticketsADT ticket) { 
     ticket->infractions = realloc(ticket->infractions, sizeof(tInfraction) * (ticket->occupiedInfraction+1));
     if (ticket->infractions == NULL) {
@@ -106,20 +108,30 @@ void resize(ticketsADT ticket) {
     }
 }
 
-//Q1, Q2 y Q3
+
 size_t getOccupied(const ticketsADT ticket){
     return ticket->occupiedInfraction;
 }
-//Q1, Q2 y Q3
+
 char* getInfractionName(ticketsADT ticket, size_t index){
+    if(index>=ticket->occupiedInfraction){ //**********OCCUPIED es el indice del ultimo ocupado o es la cant de ocupados?
+        perror(DATOINVALIDO);
+        exit(EXIT_FAILURE); 
+    }
     return ticket->infractions[index].nameInfr;
 }
-//Q1
+
 size_t getTotalFines(ticketsADT ticket, size_t index){
+    if(index>=ticket->occupiedInfraction){ //*********OCCUPIED es el indice del ultimo ocupado o es la cant de ocupados?
+        perror(DATOINVALIDO);
+        exit(EXIT_FAILURE); 
+    }
     return ticket->infractions[index].multasTotales;
 }
 
-
+/*
+*crea una nueva multa vacia.
+*/
 static tMulta * newMulta(const char* plate){
     tMulta* new = malloc(sizeof(tMulta));
     if(new == NULL){
@@ -133,8 +145,10 @@ static tMulta * newMulta(const char* plate){
     return new;
 }
 
-//si encuentra la patente agrega uno a su cantidad, caso contrario agrega la patente
-//en el lugar correspondiente siguiendo el orden alfabetico;
+/*
+* Si encuentra la patente agrega uno a su cantidad, caso contrario agrega la patente
+* en el lugar correspondiente siguiendo el orden alfabetico.
+*/
 static void addFineRec(tMulta* first, const char* patente, size_t *dim){
     int dif= strcmp(patente,first->plate);
     if(dif==0) {
@@ -161,8 +175,10 @@ static void addFineRec(tMulta* first, const char* patente, size_t *dim){
         }
     }
 }
-//busca el numero de index del arreglo de infracciones segun el numero de identificacion de la infraccion.
-//devuelve el index de la infraccion con ese id, devuelve -1 en el caso de que no exista ese numero de identificacion.
+/*
+* Busca el numero de index del arreglo de infracciones segun el numero de identificacion de la infraccion.
+* devuelve el index de la infraccion con ese id, devuelve NOTFOUND en el caso de que no exista ese numero de identificacion.
+*/
 static long int findIndexById(const ticketsADT ticket, size_t id, size_t dim){
     long int min = 0;
     long int max = dim - 1;
@@ -198,7 +214,7 @@ void addFine(ticketsADT ticket, size_t id, const char* patente, const char* agen
     ticket->infractions[index].multasTotales++;
     addAgency(ticket, agencyName, index);
 }
-//
+
 static tAgency * addAgencyRec(tAgency * agency, const char * name, long int index, size_t occupiedInfraction){
     int c;
     if (agency == NULL || (c = strcmp(agency->nameAgency, name)) > 0) {
@@ -225,6 +241,7 @@ static tAgency * addAgencyRec(tAgency * agency, const char * name, long int inde
     return agency;
 }
 
+// ********************se usa afuera de addFine o podemos volverlo static?
 void addAgency(ticketsADT ticket, const char * name, long int index){
     ticket->firstAgency = addAgencyRec(ticket->firstAgency, name, index, ticket->occupiedInfraction);
 }
@@ -232,6 +249,7 @@ void addAgency(ticketsADT ticket, const char * name, long int index){
 void beginAgency(ticketsADT ticket){
     ticket->iterAgency = ticket->firstAgency;
 }
+
 int hasNextAgency(ticketsADT ticket){
     return (ticket->iterAgency != NULL);
 }
@@ -247,7 +265,7 @@ void nextAgency(ticketsADT ticket){
     return;
 }
 
-//Q2
+
 size_t mostpopular(ticketsADT ticket, size_t * index){
     if (ticket->iterAgency == NULL) {
         fprintf(stderr, ERRORFIN);
@@ -270,7 +288,7 @@ size_t mostpopular(ticketsADT ticket, size_t * index){
     return aux;
 }
 
-//Q3
+
 static void plateWithMostFinesRec(tMulta *first, size_t * fines, char **plate){
     if(first==NULL){
         return;

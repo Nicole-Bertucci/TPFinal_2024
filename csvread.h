@@ -40,12 +40,20 @@ enum TICKETSCHI{
 #define FILE_TICKET 1
 
 
-// Funcion que lee el archivo de las infracciones
+/* 
+* Funcion que lee el archivo de las infracciones.
+* @param argv[] arreglo de argumentos a leer
+* @param tickets tipo de dato ticketsADT donde se guarda lo leido
+*/
 void csvReadInfractions(const char * argv[],ticketsADT tickets);
 
 
-
-void csvReadTickets();
+/*
+* Funcion de lectura para el archivo de Tickets.
+* @param argv[] arreglo de argumentos a leer
+* @param tickets tipo de dato ticketsADT donde se guarda lo leido
+*/
+void csvReadTickets(const char * argv[], ticketsADT ticket);
 
 
 #endif

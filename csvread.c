@@ -42,7 +42,6 @@ void csvReadInfractions(const char * argv[], ticketsADT ticket){
         }       
     }
     fclose(infractionFile);
-    printf("infraction finalizo\n");
     resize(ticket);
     sortByID(ticket);
     csvReadTickets(argv,ticket);
@@ -85,6 +84,5 @@ void csvReadTickets(const char * argv[], ticketsADT ticket) {
         }       
     }
     fclose(ticketsFile);
-    printf("tickets finalizo\n");
 
 }

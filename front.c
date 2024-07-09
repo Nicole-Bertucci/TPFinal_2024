@@ -24,8 +24,8 @@ void writeHeaderQ1(FILE * Q1CSV){
  fputs("infraction;tickets\n",Q1CSV);
 }
 
-void writeRowQ1(char*totalFines, char*infraction, FILE * Q1CSV){
-  char * row[]={infraction, totalFines};
+void writeRowQ1(char * infractionName, char * totalFines, FILE * Q1CSV){
+  char * row[]={totalFines, infractionName};
      for (int i=0; i<MAXQ1; i++)
     {
         fputs(row[i],Q1CSV);
@@ -46,7 +46,7 @@ void writeHeaderQ2(FILE * Q2CSV){
    fputs("issuingAgency;infraction;tickets\n",Q2CSV);
 }  
 
-void writeRowQ2(char *issuingAgency,char * infractionName, char * totalFines, FILE * Q2CSV){
+void writeRowQ2(char * issuingAgency,char * infractionName, char * totalFines, FILE * Q2CSV){
     char * line[] = {issuingAgency,infractionName,totalFines}; 
     for (int i = 0; i < MAXQ2; i++) {
         fputs(line[i],Q2CSV);
@@ -67,8 +67,8 @@ void writeHeaderQ3(FILE * Q3CSV){
    fputs("infraction;plate;tickets\n",Q3CSV);
 }
 
-void writeRowQ3(char *infraction, char* plate, char* fine, FILE * Q3CSV){
-    char * row[]={infraction, plate, fine };
+void writeRowQ3(char * infractionName, char * plate, char * totalFines, FILE * Q3CSV){
+    char * row[]={infractionName, plate, totalFines };
     for (int i=0; i<MAXQ3; i++){
         fputs(row[i],Q3CSV);
         switch (i)
