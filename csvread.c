@@ -2,8 +2,8 @@
 #include <errno.h>
 #include <stdlib.h>
 #include <string.h>
-#include "ticketsADT.h"
 #include "csvread.h"
+
 #define LINE 250
 #define READ "rt"
 

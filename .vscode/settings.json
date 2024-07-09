@@ -3,6 +3,7 @@
         "ctype.h": "c",
         "ticketsadt.h": "c",
         "typeinfo": "c",
-        "csvread.h": "c"
+        "csvread.h": "c",
+        "stdio.h": "c"
     }
 }

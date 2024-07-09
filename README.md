@@ -57,12 +57,12 @@ Para ejecutar el codigo hay que pasarle 2 parametros: primero el archivo de tick
 
 ### Para New York
 
-´´´sh
+```
 ​./parkingTicketsNYC ticketsNYC.csv infractionsNYC.csv
-´´´
+```
 
 ### Para Chicago
 
-´´´sh
+```
 ​./parkingTicketsCHI ticketsCHI.csv infractionsCHI.csv
-´´´
+```

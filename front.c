@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "ticketsADT.h"
+#include "front.h"
 
 #define WRITE "wt"
 #define OPENCSV "Error en la apertura del archivo\n"
@@ -11,6 +11,7 @@
 #define MAXQ3 3
 #define LASTQ3 MAXQ3-1
 #define SEPARAT ";"  
+
 FILE * newFile(char * name){
     FILE * file=fopen(name,WRITE);
     if(file==NULL){

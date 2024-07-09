@@ -4,7 +4,6 @@
 #include <strings.h>
 #include <ctype.h>
 #include "ticketsADT.h"
-#include "csvread.h"
 
 #define ERRORMEMORIA "Error de asignacion de memoria\n"
 #define DATOINVALIDO "Dato ingresado es invalido"

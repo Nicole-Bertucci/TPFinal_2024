@@ -1,9 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-#include "ticketsADT.h"
-#include "front.h"
 #include "queries.h"
 
 #define ERRORMEMORIA "Error de asignacion de memoria\n"

@@ -12,12 +12,10 @@
 #define FORMATCHI 0
 #endif
 
-//NYC
 #if FORMATNYC
 #define DESCRIPTION 30+1
 #define ISSUINGAGENCY 35+1
 
-//CHI
 #elif FORMATCHI
 #define DESCRIPTION 50+1
 #define ISSUINGAGENCY 13+1
