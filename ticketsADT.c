@@ -11,16 +11,16 @@
 #define BLOQUE 10
 #define NOTFOUND -1
 #define ERRORFIN "Error en el recorrido de las Agencias"
-typedef struct tMulta{
-    struct tMulta *izq;
-    struct tMulta *der;
+typedef struct tFine{
+    struct tFine *izq;
+    struct tFine *der;
     char plate[PLATE];
     size_t cantidad;
-}tMulta;
+}tFine;
 
 typedef struct tInfraction{
     char nameInfr[DESCRIPTION];
-    tMulta * firstMulta;
+    tFine * firstFine;
     size_t dimMultas;
     size_t multasTotales;
     size_t idNumber;
@@ -93,7 +93,7 @@ void addInfraction(ticketsADT ticket, size_t id, const char* name){
     strcpy(ticket->infractions[i].nameInfr,name);
     ticket->infractions[i].dimMultas=0;
     ticket->infractions[i].multasTotales=0;
-    ticket->infractions[i].firstMulta=NULL;
+    ticket->infractions[i].firstFine=NULL;
     ticket->infractions[i].idNumber=id;
     ticket->occupiedInfraction++;
 }
@@ -131,8 +131,8 @@ size_t getTotalFines(ticketsADT ticket, size_t index){
 /*
 *crea una nueva multa vacia.
 */
-static tMulta * newFine(const char* plate){
-    tMulta* new = malloc(sizeof(tMulta));
+static tFine * newFine(const char* plate){
+    tFine* new = malloc(sizeof(tFine));
     if(new == NULL){
         perror(ERRORMEMORIA);
         exit(EXIT_FAILURE);
@@ -148,14 +148,14 @@ static tMulta * newFine(const char* plate){
 * Si encuentra la patente agrega uno a su cantidad, caso contrario agrega la patente
 * en el lugar correspondiente siguiendo el orden alfabetico.
 */
-static void addFineRec(tMulta* first, const char* patente, size_t *dim){
+static void addFineRec(tFine* first, const char* patente, size_t *dim){
     int dif= strcmp(patente,first->plate);
     if(dif==0) {
         first->cantidad++;
     }
     else if(dif<0) {
         if(first->izq == NULL){
-            tMulta *new=newFine(patente);
+            tFine *new=newFine(patente);
             first->izq=new;
             (*dim)++;
         }
@@ -165,7 +165,7 @@ static void addFineRec(tMulta* first, const char* patente, size_t *dim){
     }
     else { // dif>0
         if(first->der == NULL){
-            tMulta *new=newFine(patente);
+            tFine *new=newFine(patente);
             first->der=new;
             (*dim)++;
         }
@@ -237,12 +237,12 @@ void addFine(ticketsADT ticket, size_t id, const char* patente, const char* agen
         return;
     }
 
-    if(ticket->infractions[index].firstMulta == NULL){
-        ticket->infractions[index].firstMulta = newFine(patente);
+    if(ticket->infractions[index].firstFine == NULL){
+        ticket->infractions[index].firstFine = newFine(patente);
         ticket->infractions[index].dimMultas = 1;
     }
     else{
-        addFineRec(ticket->infractions[index].firstMulta, patente, &(ticket->infractions[index].dimMultas));
+        addFineRec(ticket->infractions[index].firstFine, patente, &(ticket->infractions[index].dimMultas));
     }
     ticket->infractions[index].multasTotales++;
     addAgency(ticket, agencyName, index);
@@ -292,7 +292,7 @@ size_t mostpopular(ticketsADT ticket, size_t * index){
 }
 
 
-static void plateWithMostFinesRec(tMulta *first, size_t * fines, char **plate){
+static void plateWithMostFinesRec(tFine *first, size_t * fines, char **plate){
     if(first==NULL){
         return;
     }
@@ -311,26 +311,26 @@ static void plateWithMostFinesRec(tMulta *first, size_t * fines, char **plate){
 }
 
 size_t plateWithMostFines(ticketsADT ticket,size_t id, char plate[PLATE]){
-    if(ticket->infractions[id].firstMulta==NULL){
+    if(ticket->infractions[id].firstFine==NULL){
         return 0;
     }
     size_t fines = 0;
     char *mostFinesPlate = NULL;
-    plateWithMostFinesRec(ticket->infractions[id].firstMulta, &fines, &mostFinesPlate);
+    plateWithMostFinesRec(ticket->infractions[id].firstFine, &fines, &mostFinesPlate);
     if (mostFinesPlate != NULL) {
         strcpy(plate, mostFinesPlate);
     }   
     return fines;
 }
 
-static void freeMulta( tMulta*firstMulta){
-    if(firstMulta==NULL){
+static void freeMulta( tFine*firstFine){
+    if(firstFine==NULL){
         return;
     }
     else{
-        freeMulta(firstMulta->izq);
-        freeMulta(firstMulta->der);
-        free(firstMulta);
+        freeMulta(firstFine->izq);
+        freeMulta(firstFine->der);
+        free(firstFine);
     }
 }
 
@@ -346,7 +346,7 @@ static void freeAgency( tAgency*firstAgency){
 
 void freeTicket(ticketsADT ticket){
     for(int i=0; i<ticket->occupiedInfraction; i++){
-        freeMulta(ticket->infractions[i].firstMulta);
+        freeMulta(ticket->infractions[i].firstFine);
     }
     free(ticket->infractions);
     freeAgency(ticket->firstAgency);

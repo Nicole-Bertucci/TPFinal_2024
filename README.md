@@ -29,7 +29,7 @@ La información debe listarse ordenada en forma alfabética por infracción.
 
 ### Fuente
 
-- **main.c**: Contiene la función principal del programa.
+- **parkingTickets.c**: Contiene la función principal del programa.
 - **ticketsADT.c**: Implementa la lógica para manejar las estructuras de datos de las multas y agencias.
 - **csvread.c**: Funciones para leer y procesar archivos CSV.
 - **queries.c**: Implementa las consultas sobre las multas.
