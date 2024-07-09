@@ -24,7 +24,6 @@ void query1(ticketsADT ticket){
     FILE * Q1CSV=newFile("query1.csv");
     writeHeaderQ1(Q1CSV);
     sortByTotal(ticket);
-    //sortByID(ticket);
     size_t totalFines;
     char * infractionName;
     char * stringTotalFines;

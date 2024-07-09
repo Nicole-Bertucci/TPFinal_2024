@@ -35,7 +35,7 @@ typedef struct tAgency{
 
 typedef struct ticketsCDT{
     tInfraction * infractions;
-    size_t occupiedInfraction; //index de array de infracciones donde esta el ultimo elemento no vacio
+    size_t occupiedInfraction; 
     tAgency * firstAgency;
     tAgency * iterAgency;
 }ticketsCDT;
@@ -113,7 +113,7 @@ size_t getOccupied(const ticketsADT ticket){
 }
 
 char* getInfractionName(ticketsADT ticket, size_t index){
-    if(index>=ticket->occupiedInfraction){ //**********OCCUPIED es el indice del ultimo ocupado o es la cant de ocupados?
+    if(index>=ticket->occupiedInfraction){ 
         perror(DATOINVALIDO);
         exit(EXIT_FAILURE); 
     }
@@ -121,7 +121,7 @@ char* getInfractionName(ticketsADT ticket, size_t index){
 }
 
 size_t getTotalFines(ticketsADT ticket, size_t index){
-    if(index>=ticket->occupiedInfraction){ //*********OCCUPIED es el indice del ultimo ocupado o es la cant de ocupados?
+    if(index>=ticket->occupiedInfraction){ 
         perror(DATOINVALIDO);
         exit(EXIT_FAILURE); 
     }
@@ -163,7 +163,7 @@ static void addFineRec(tFine* first, const char* patente, size_t *dim){
             addFineRec(first->izq, patente, dim);
         }
     }
-    else { // dif>0
+    else {
         if(first->der == NULL){
             tFine *new=newFine(patente);
             first->der=new;
@@ -226,6 +226,7 @@ static tAgency * addAgencyRec(tAgency * agency, const char * name, long int inde
 * Agrega en la lista por orden alfabetico una nueva agencia.
 * @param ticket ciudad en donde existe la agencia.
 * @param name nombre de la agencia.
+* @param index indice de la infraccion
 */
 static void addAgency(ticketsADT ticket, const char * name, long int index){
     ticket->firstAgency = addAgencyRec(ticket->firstAgency, name, index, ticket->occupiedInfraction);

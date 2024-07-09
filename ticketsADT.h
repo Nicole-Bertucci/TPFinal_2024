@@ -41,6 +41,19 @@ ticketsADT newTicket();
 */
 void addInfraction(ticketsADT ticket, size_t id, const char* name);
 
+/* 
+* Si la patente no existe en el arreglo agrega la multa alfabeticamente en el arbol segun la patente en 
+* infraccion con numero de identificacion id, en el caso contrario solo aumenta la cantidad de
+* multas de esa patente. Aumenta la cantidad de multas totales de ese tipo de infraccion.Aumenta
+* la cantidad de infracciones del tipo generado por la agencia de nombre agency. En el caso en el que
+* no exista tal infraccion con ese ID se omite el guardado de la multa.
+* @param ticket ciudad en donde ocurren las multas.
+* @param idInfraccion numero de identificacion de la infraccion.
+* @param patente numero de patente a la que se le aplico la multa.
+* @param nombre de la agencia que escribe la multa.
+*/
+void addFine(ticketsADT ticket, size_t id, const char* patente, const char* agencyName );
+
 /*
 * Crea un nuevo espacio vacio al final del arreglo de infracciones de ticket
 * @param ticket ciudad donde se encuentran las infracciones.
@@ -68,18 +81,6 @@ char* getInfractionName(ticketsADT ticket, size_t index);
 */
 size_t getTotalFines(ticketsADT ticket, size_t index);
 
-/* 
-* Si la patente no existe en el arreglo agrega la multa alfabeticamente en el arbol segun la patente en 
-* infraccion con numero de identificacion id, en el caso contrario solo aumenta la cantidad de
-* multas de esa patente. Aumenta la cantidad de multas totales de ese tipo de infraccion.Aumenta
-* la cantidad de infracciones del tipo generado por la agencia de nombre agency. En el caso en el que
-* no exista tal infraccion con ese ID se omite el guardado de la multa.
-* @param ticket ciudad en donde ocurren las multas.
-* @param idInfraccion numero de identificacion de la infraccion.
-* @param patente numero de patente a la que se le aplico la multa.
-* @param nombre de la agencia que escribe la multa.
-*/
-void addFine(ticketsADT ticket, size_t id, const char* patente, const char* agencyName );
 
 /*
 * Resetea el iterador que recorre la lista de Agency.
@@ -114,7 +115,6 @@ char * getNameAgency(ticketsADT ticket);
 */
 size_t mostpopular(ticketsADT ticket, size_t * index);
 
-
 /*
 * @return Devuelve la cantidad de multas totales de la patente con
 * la mayor cantidad de multas segun la infraccion con ID id.
@@ -146,7 +146,6 @@ void sortByAlph(ticketsADT ticket);
 * @param ticket ciudad en donde existen las infracciones.
 */
 void sortByTotal(ticketsADT ticket);
-
 
 /*
 * Libera los recursos utilizados por ticket
